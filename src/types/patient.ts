@@ -3,7 +3,31 @@ export interface Patient {
     firstName: string;
     lastName: string;
     dob: string;
-    telecom: string;
-    isActive: boolean;
     created: string;
+    telecom?: string;
+    isActive?: boolean;
+}
+
+export interface PatientPost {
+    firstName: string;
+    lastName: string;
+    dob: string;
+    telecom?: string;
+    isActive?: boolean;
+}
+
+export interface PatientPatch {
+    firstName?: string;
+    lastName?: string;
+    dob?: string;
+    telecom?: string;
+    isActive?: boolean;
+}
+
+export interface PatientPut {
+    firstName: string;
+    lastName: string;
+    dob: string;
+    telecom?: string;
+    isActive?: boolean;
 }

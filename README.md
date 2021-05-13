@@ -1,3 +1,24 @@
+# TODO
+
+* hasher investigations & pattern
+* generate some test patients
+* populate the patients
+* response handling pattern
+* error handling pattern
+* request builder?
+* error handler impl
+
+# Notes for them
+
+* patch vs put
+* id pattern: md5/hex first 7
+* search func behavior
+
+# QQs
+
+* *nix or windows?
+* id ok?
+
 # Endpoints, Methods, & Parameters
 
 ## General `GET` query parameters
