@@ -1,0 +1,1 @@
+import { FileDao } from '../src/shared/dao';

@@ -1,0 +1,23 @@
+{
+  "name": "patient-api",
+  "version": "1.0.0",
+  "description": "",
+  "main": "bin/src/main.js",
+  "directories": {
+    "test": "test"
+  },
+  "scripts": {
+    "predoc:build": "tsc",
+    "doc:build": "docker build . -t patient",
+    "doc:start": "docker run -it -p 8080:8080 patient",
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "hapi": "^18.1.0"
+  },
+  "devDependencies": {
+    "@types/hapi": "^18.0.5"
+  }
+}
