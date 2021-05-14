@@ -1,8 +1,15 @@
 # TODO
 
-* hasher investigations & pattern
-* generate some test patients
-* populate the patients
+* ~~hasher investigations & pattern~~
+* ~~generate some test patients~~
+* pattern for metadata
+* implement & test dao methods
+    - ~~add~~
+    - ~~get~~
+    - edit
+    - delete
+    - query
+* request validation pattern
 * response handling pattern
 * error handling pattern
 * request builder?
