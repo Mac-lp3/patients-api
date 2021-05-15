@@ -3,11 +3,13 @@
 * ~~hasher investigations & pattern~~
 * ~~generate some test patients~~
 * pattern for metadata
+* pattern for error/code mapping
 * implement & test dao methods
     - ~~add~~
     - ~~get~~
-    - edit
-    - delete
+    - ~~patch~~
+    - ~~put~~
+    - ~~delete~~
     - query
 * request validation pattern
 * response handling pattern
@@ -15,11 +17,16 @@
 * request builder?
 * error handler impl
 
+* creation/constructor/builder methods for patient objects?
+
 # Notes for them
 
-* patch vs put
+* installation notes
+* use of patch vs put
 * id pattern: md5/hex first 7
+* downside of updating IDs (is that a problem given the spec tho?)
 * search func behavior
+* hypothetical deployment 
 
 # QQs
 
