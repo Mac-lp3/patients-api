@@ -20,7 +20,7 @@ export class MemDao {
     public addPatient(form: PatientPost): Patient {
         const generatedID = getID(form);
         
-        if(MemDao.PATIENTS.has(generatedID)) {
+        if(this.exists(generatedID)) {
             this.throwIt(MemDao.NOT_UNIQUE_ERR_MSG);
         }
 
@@ -39,7 +39,7 @@ export class MemDao {
 
     public getPatient(patientID: string): Patient {
 
-        if(!MemDao.PATIENTS.has(patientID)) {
+        if(!this.exists(patientID)) {
             this.throwIt(MemDao.NOT_FOUND_ERR_MSG);
         }
 
@@ -50,6 +50,10 @@ export class MemDao {
 
     public editPatient(form: PatientPut | PatientPatch): Patient {
         return {} as Patient;
+    }
+
+    public exists(patientID: string): boolean {
+        return MemDao.PATIENTS.has(patientID);
     }
 
     public deletePatient(id: string) {}

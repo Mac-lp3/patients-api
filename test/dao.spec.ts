@@ -5,10 +5,10 @@ import { ApiError } from '../src/types/error';
 import { patientForms } from '../src/conf/data';
 import { Patient } from '../src/types/patient';
 
-const newGuyForm = {
-    firstName: '',
-    lastName: '',
-    dob: ''
+const newPatientForm = {
+    firstName: 'Lisa',
+    lastName: 'Simpson',
+    dob: '1997'
 }
 
 describe('memory based dao', function() {
@@ -35,6 +35,15 @@ describe('memory based dao', function() {
     })
 
     it('should add unique patients', function() {
+
+        const id = getID(newPatientForm);
+
+        ok(!dao.exists(id));
+
+        const newPat = dao.addPatient(newPatientForm);
+
+        ok(dao.exists(newPat.id));
+        ok(newPat.created);
 
     })
 
