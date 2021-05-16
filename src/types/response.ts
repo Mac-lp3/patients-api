@@ -1,5 +1,3 @@
-import { ApiError } from './error';
-
 interface BaseResponse {
     metadata: any;
 }
@@ -13,11 +11,3 @@ interface ResourceResponse extends BaseResponse {
 }
 
 export type ApiResponse = ErrorResponse | ResourceResponse;
-
-let resp: ApiResponse;
-
-resp = {
-    metadata: {},
-    error: {},
-    payload: []
-};

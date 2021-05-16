@@ -1,4 +1,5 @@
 import * as Hapi from 'hapi';
+import * as patients from './handlers/patients';
 
 const PORT = 8080;
 const HOST = '0.0.0.0';
@@ -13,10 +14,25 @@ async function init() {
     server.route({
         method: 'GET',
         path: '/api/patients',
-        handler: (request, h) => {
+        handler: patients.getPatientCollection
+    });
 
-            return 'Hello World!';
-        }
+    server.route({
+        method: 'POST',
+        path: '/api/patients',
+        handler: patients.postPatientCollection
+    });
+
+    server.route({
+        method: 'GET',
+        path: '/api/patients/{patientID}',
+        handler: patients.getPatientInstance
+    });
+
+    server.route({
+        method: 'PATCH',
+        path: '/api/patients/{patientID}',
+        handler: patients.patchPatientInstance
     });
 
     await server.start();
