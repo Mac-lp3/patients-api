@@ -13,9 +13,9 @@ const newPatientForm = {
     telecom: '8675309'
 }
 
-describe('memory based dao', function() {
+const dao = new MemDao();
 
-    const dao = new MemDao();
+describe('memory based dao', function() {
 
     it('should populate as expected. Should GET by ID as expected.', function() {
         
@@ -147,6 +147,45 @@ describe('memory based dao', function() {
     })
 
     it('should query patients as expected', function() {
+
+        const queryTestForm1 = {
+            firstName: 'Bart',
+            lastName: 'Simpson',
+            dob: '1995',
+            telecom: '8675309'
+        }
+        let patient = dao.addPatient(queryTestForm1);
+
+        // test just filter
+        let queryResults = dao.query({ firstName: 'Bart' });
+        strictEqual(queryResults.length, 1);
+        strictEqual(queryResults[0].firstName, 'Bart');
+        strictEqual(queryResults[0].id, patient.id);
+
+        // test just for term
+        queryResults = dao.query('Bart');
+        strictEqual(queryResults.length, 1);
+        strictEqual(queryResults[0].firstName, 'Bart');
+        strictEqual(queryResults[0].id, patient.id);
+
+        // ensure the term can get multiple results
+        dao.addPatient({
+            firstName: 'Lisa',
+            lastName: 'Simpson',
+            dob: '1997',
+            telecom: '8675309'
+        });
+        queryResults = dao.query('Simpson');
+        strictEqual(queryResults.length, 2);
+        strictEqual(queryResults[0].firstName, 'Bart');
+        strictEqual(queryResults[1].firstName, 'Lisa');
+
+        // test both filter and term
+        queryResults = dao.query({ lastName: 'Simpson' });
+        strictEqual(queryResults.length, 2);
+        queryResults = dao.query('Bart', { lastName: 'Simpson' });
+        strictEqual(queryResults.length, 1);
+        strictEqual(queryResults[0].firstName, 'Bart');
 
     })
 

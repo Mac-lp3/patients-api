@@ -3,35 +3,88 @@ import { ApiError } from '../types/error';
 import { patientForms } from '../conf/data';
 import { Patient, PatientPost, PatientPut, PatientPatch } from '../types/patient';
 
+/**
+ * Patient data access object. Reads patient data from src/conf/data.ts into memory on construction.
+ */
 export class MemDao {
 
     private static PATIENTS: Map<string, Patient> = new Map();
-    
     private static NOT_FOUND_ERR_CODE: string = '100'
     private static NOT_UNIQUE_ERR_CODE: string = '101'
 
     constructor() {
+        // read in the dummy data
         patientForms.forEach(post => {
             this.addPatient(post);
         });
     }
 
-    // overloads
     public query(term: string): Patient[];
     public query(filter: PatientPatch): Patient[];
     public query(term: string, filter: PatientPatch): Patient[];
     public query(termOrFilter: string | PatientPatch, filter?: PatientPatch): Patient[] {
-        // check if 1st parm is str
 
+
+        let term: string;
+        let isTerm: boolean;
+        let isFilter: boolean;
+
+        // apply just a search term, filter, or both?
+        if(typeof termOrFilter === 'string') {
+            term = termOrFilter;
+            if(filter === undefined) {
+                isTerm = true
+                isFilter = false;
+            } else {
+                isTerm = true
+                isFilter = true;
+            }
+        } else {
+            isTerm = false
+            isFilter = true;
+            filter = termOrFilter;
+        }
+
+        // search for patients that match the criteria
+        let filterMatch: boolean;
         let stringToCheck: string;
         const resultSet: Patient[] = [];
-        MemDao.PATIENTS.forEach((patient, id) => {
+
+        MemDao.PATIENTS.forEach((patient) => {
+
+            if (isFilter) {
+
+                // check if patient passes filter
+                for (let [key, val] of Object.entries(filter as PatientPatch)) {
+
+                    if ((patient as any)[key] === val) {
+                        filterMatch = true;
+                        break;
+                    }
+                }
+
+                if (!filterMatch) {
+                    // go to next if not
+                    return;
+                }
+            }
             
-            // TODO only if term given
-            stringToCheck = `${patient.firstName}${patient.lastName}${patient.telecom}`
+            if (isTerm) {
+                
+                // check if patient contains term
+                stringToCheck = `${patient.firstName}${patient.lastName}${patient.telecom}`
+                if (!stringToCheck.toLowerCase().includes((term as string).toLowerCase())) {
+                    // go to next if not
+                    return;
+                }
+            }
 
+            // if we made it this far, all good
+            resultSet.push(patient);
 
-        })
+            // reset for next patient
+            filterMatch = false;
+        });
 
         return resultSet;
     }
@@ -153,4 +206,3 @@ export class MemDao {
         throw er;
     }
 }
-

@@ -2,15 +2,9 @@
 
 * ~~hasher investigations & pattern~~
 * ~~generate some test patients~~
-* implement & test dao methods
-    - ~~add~~
-    - ~~get~~
-    - ~~patch~~
-    - ~~put~~
-    - ~~delete~~
-    - query
+* ~~implement & test dao methods~~
 * pattern for metadata
-* pattern for error/code mapping
+* ~~pattern for error/code mapping~~
 * request validation pattern
 * response handling pattern
 * error handling pattern
