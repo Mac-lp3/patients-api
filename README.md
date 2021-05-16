@@ -3,12 +3,15 @@
 * ~~hasher investigations & pattern~~
 * ~~generate some test patients~~
 * ~~implement & test dao methods~~
-* pattern for metadata
 * ~~pattern for error/code mapping~~
+* ~~pattern for metadata~~
+* add endpoints 
+    + Promise.all() and assemble
 * request validation pattern
 * response handling pattern
 * error handling pattern
-* request builder?
+* limit/offset to query function
+* request/response builder?
 * error handler impl
 
 * creation/constructor/builder methods for patient objects?
@@ -24,6 +27,7 @@
 * id pattern: md5/hex first 7
 * downside of updating IDs (is that a problem given the spec tho?)
 * search func behavior
+* use of length & async plan
 * hypothetical deployment 
 
 # QQs

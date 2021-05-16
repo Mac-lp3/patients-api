@@ -17,14 +17,14 @@ const dao = new MemDao();
 
 describe('memory based dao', function() {
 
-    it('should populate as expected. Should GET by ID as expected.', function() {
+    it('should populate as expected. Should GET by ID as expected.', async function() {
         
         let id: string;
         let pat: Patient | undefined;
         
-        patientForms.forEach(frm => {
+        patientForms.forEach(async frm => {
             id = getID(frm);
-            pat = dao.getPatient(id);
+            pat = await dao.getPatient(id);
 
             strictEqual(id, pat.id);
             strictEqual(frm.firstName, pat.firstName);
@@ -36,49 +36,50 @@ describe('memory based dao', function() {
         })
     })
 
-    it('should error when ID is not found', function() {
+    it('should error when ID is not found', async function() {
 
         try {
-            dao.getPatient('lol idk');
+            await dao.getPatient('lol idk');
             ok(false);
         } catch (ex) {
             strictEqual((ex as ApiError).code, '100');
         }
 
         try {
-            dao.putPatient('lol idk', newPatientForm);
+            await dao.putPatient('lol idk', newPatientForm);
             ok(false);
         } catch (ex) {
             strictEqual((ex as ApiError).code, '100');
         }
 
         try {
-            dao.patchPatient('lol idk', newPatientForm);
+            await dao.patchPatient('lol idk', newPatientForm);
             ok(false);
         } catch (ex) {
             strictEqual((ex as ApiError).code, '100');
         }
     })
 
-    it('should add unique patients', function() {
+    it('should add unique patients', async function() {
 
         const id = getID(newPatientForm);
+        let exists = await dao.exists(id);
+        ok(!exists);
 
-        ok(!dao.exists(id));
+        const newPat = await dao.addPatient(newPatientForm);
 
-        const newPat = dao.addPatient(newPatientForm);
-
-        ok(dao.exists(newPat.id));
+        exists = await dao.exists(newPat.id);
+        ok(exists);
         ok(newPat.created);
         strictEqual(newPat.telecom, newPatientForm.telecom);
 
     })
 
-    it('should reject non-unique patients', function() {
+    it('should reject non-unique patients', async function() {
 
-        patientForms.forEach(pat => {
+        patientForms.forEach(async pat => {
             try {
-                dao.addPatient(patientForms[0]);
+                await dao.addPatient(patientForms[0]);
                 ok(false);
             } catch(ex) {
                 strictEqual((ex as ApiError).code, '101');
@@ -87,18 +88,18 @@ describe('memory based dao', function() {
 
     })
 
-    it('should PATCH patients as expected', function() {
+    it('should PATCH patients as expected', async function() {
 
         // Test w/ property that does NOT change ID
         let testID = getID(patientForms[0]);
-        let testPatient = dao.getPatient(testID);
+        let testPatient = await dao.getPatient(testID);
 
         ok(!testPatient.hasOwnProperty('telecom'));
 
         let testPatch: PatientPatch = {
             telecom: '09090909'
         }
-        testPatient = dao.patchPatient(testID, testPatch);
+        testPatient = await dao.patchPatient(testID, testPatch);
 
         ok(testPatient.hasOwnProperty('telecom'));
         strictEqual(testID, testPatient.id);
@@ -108,25 +109,25 @@ describe('memory based dao', function() {
         testPatch = {
             lastName: 'Smithers'
         }
-        testPatient = dao.patchPatient(testID, testPatch);
+        testPatient = await dao.patchPatient(testID, testPatch);
 
         ok(testPatient.lastName === 'Smithers');
         ok(testID !== testPatient.id);
-        ok(!dao.exists(testID));
-        ok(dao.exists(testPatient.id));
+        ok(!await dao.exists(testID));
+        ok(await dao.exists(testPatient.id));
 
     })
 
-    it('should PUT patients as expected', function() {
+    it('should PUT patients as expected', async function() {
 
         // test with non-id related properties
         const id = getID(newPatientForm);
 
         // assumes this test runs after the add patient ones
-        let testPat = dao.getPatient(id);
+        let testPat = await dao.getPatient(id);
 
         (newPatientForm as any).isActive = true;
-        let newPat = dao.putPatient(id, newPatientForm);
+        let newPat = await dao.putPatient(id, newPatientForm);
 
         strictEqual(testPat.id, newPat.id);
         ok(newPat.hasOwnProperty('isActive'));
@@ -136,17 +137,17 @@ describe('memory based dao', function() {
         newPatientForm.firstName = 'Sideshow';
         newPatientForm.lastName = 'Bob';
 
-        newPat = dao.putPatient(id, newPatientForm);
+        newPat = await dao.putPatient(id, newPatientForm);
 
-        ok(!dao.exists(id));
-        ok(dao.exists(newPat.id));
+        ok(!await dao.exists(id));
+        ok(await dao.exists(newPat.id));
         notStrictEqual(newPat.id, testPat.id);
         notStrictEqual(newPat.firstName, testPat.firstName);
         strictEqual(newPat.firstName, newPatientForm.firstName);
 
     })
 
-    it('should query patients as expected', function() {
+    it('should query patients as expected', async function() {
 
         const queryTestForm1 = {
             firstName: 'Bart',
@@ -154,36 +155,42 @@ describe('memory based dao', function() {
             dob: '1995',
             telecom: '8675309'
         }
-        let patient = dao.addPatient(queryTestForm1);
+        let patient = await dao.addPatient(queryTestForm1);
 
         // test just filter
-        let queryResults = dao.query({ firstName: 'Bart' });
+        let queryResults = await dao.query({ firstName: 'Bart' });
+        let count = await dao.length({ firstName: 'Bart' });
+        strictEqual(count, 1);
         strictEqual(queryResults.length, 1);
         strictEqual(queryResults[0].firstName, 'Bart');
         strictEqual(queryResults[0].id, patient.id);
 
         // test just for term
-        queryResults = dao.query('Bart');
+        queryResults = await dao.query('Bart');
+        count = await dao.length('Bart');
+        strictEqual(count, 1);
         strictEqual(queryResults.length, 1);
         strictEqual(queryResults[0].firstName, 'Bart');
         strictEqual(queryResults[0].id, patient.id);
 
         // ensure the term can get multiple results
-        dao.addPatient({
+        await dao.addPatient({
             firstName: 'Lisa',
             lastName: 'Simpson',
             dob: '1997',
             telecom: '8675309'
         });
-        queryResults = dao.query('Simpson');
+        queryResults = await dao.query('Simpson');
+        count = await dao.length('Simpson');
+        strictEqual(count, 2);
         strictEqual(queryResults.length, 2);
         strictEqual(queryResults[0].firstName, 'Bart');
         strictEqual(queryResults[1].firstName, 'Lisa');
 
         // test both filter and term
-        queryResults = dao.query({ lastName: 'Simpson' });
+        queryResults = await dao.query({ lastName: 'Simpson' });
         strictEqual(queryResults.length, 2);
-        queryResults = dao.query('Bart', { lastName: 'Simpson' });
+        queryResults = await dao.query('Bart', { lastName: 'Simpson' });
         strictEqual(queryResults.length, 1);
         strictEqual(queryResults[0].firstName, 'Bart');
 

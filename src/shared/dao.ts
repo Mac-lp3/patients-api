@@ -19,11 +19,10 @@ export class MemDao {
         });
     }
 
-    public query(term: string): Patient[];
-    public query(filter: PatientPatch): Patient[];
-    public query(term: string, filter: PatientPatch): Patient[];
-    public query(termOrFilter: string | PatientPatch, filter?: PatientPatch): Patient[] {
-
+    public async query(term: string): Promise<Patient[]>;
+    public async query(filter: PatientPatch): Promise<Patient[]>;
+    public async query(term: string, filter: PatientPatch): Promise<Patient[]>;
+    public async query(termOrFilter: string | PatientPatch, filter?: PatientPatch): Promise<Patient[]> {
 
         let term: string;
         let isTerm: boolean;
@@ -89,10 +88,10 @@ export class MemDao {
         return resultSet;
     }
 
-    public addPatient(form: PatientPost): Patient {
+    public async addPatient(form: PatientPost): Promise<Patient> {
         const generatedID = getID(form);
         
-        if(this.exists(generatedID)) {
+        if(await this.exists(generatedID)) {
             this.throwIt(MemDao.NOT_UNIQUE_ERR_CODE);
         }
 
@@ -113,9 +112,9 @@ export class MemDao {
         return patient;
     }
 
-    public getPatient(patientID: string): Patient {
+    public async getPatient(patientID: string): Promise<Patient> {
 
-        if(!this.exists(patientID)) {
+        if(!await this.exists(patientID)) {
             this.throwIt(MemDao.NOT_FOUND_ERR_CODE);
         }
 
@@ -133,18 +132,18 @@ export class MemDao {
      * @param form 
      * @returns The updated Patient object, potentially with a new ID
      */
-    public putPatient(patientID: string, form: PatientPut): Patient {
-        if(!this.exists(patientID)) {
+    public async putPatient(patientID: string, form: PatientPut): Promise<Patient> {
+        if(!await this.exists(patientID)) {
             this.throwIt(MemDao.NOT_FOUND_ERR_CODE);
         }
 
         // since this may not generate a new ID, remove the current one to prevent an error
-        const currentPatient = this.getPatient(patientID);
+        const currentPatient = await this.getPatient(patientID);
         this.deletePatient(patientID);
 
         let newPatient: Patient;
         try {
-            newPatient = this.addPatient(form);
+            newPatient = await this.addPatient(form);
         } catch(ex) {
             // replace the old patient
             this.addPatient(currentPatient);
@@ -163,12 +162,12 @@ export class MemDao {
      * @param form 
      * @returns the updated Patient object, potentially with a new ID
      */
-    public patchPatient(patientID: string, form: PatientPatch): Patient {
-        if(!this.exists(patientID)) {
+    public async patchPatient(patientID: string, form: PatientPatch): Promise<Patient> {
+        if(!await this.exists(patientID)) {
             this.throwIt(MemDao.NOT_FOUND_ERR_CODE);
         }
 
-        const currentPatient = this.getPatient(patientID);
+        const currentPatient = await this.getPatient(patientID);
 
         for(let [key, val] of Object.entries(form)) {
 
@@ -181,18 +180,102 @@ export class MemDao {
         currentPatient.id = newID;
 
         // replace old ID with new one, just in case.
-        this.deletePatient(patientID);
+        await this.deletePatient(patientID);
         MemDao.PATIENTS.set(newID, currentPatient);
 
         return currentPatient;
     }
 
-    public exists(patientID: string): boolean {
-        return MemDao.PATIENTS.has(patientID);
+    public async exists(patientID: string): Promise<boolean> {
+        const exists: boolean = MemDao.PATIENTS.has(patientID);
+        return exists;
     }
 
-    public deletePatient(id: string) {
+    public async deletePatient(id: string) {
         MemDao.PATIENTS.delete(id);
+    }
+
+    /**
+     * General method to get the complete size of the Patients collection, after filters have been applied.
+     * This number can be used to populate a UI or help with pagination.
+     */
+    public async length(): Promise<number>;
+    public async length(term: string): Promise<number>;
+    public async length(filter: PatientPatch): Promise<number>;
+    public async length(term: string, filter: PatientPatch): Promise<number>;
+    public async length(termOrFilter?: string | PatientPatch, filter?: PatientPatch): Promise<number> {
+
+        let returnLength: number = 0;
+
+        if (termOrFilter === undefined) {
+
+            // no args. return length of whole collection
+            returnLength = MemDao.PATIENTS.size;
+
+        } else {
+
+            let term: string;
+            let isTerm: boolean;
+            let isFilter: boolean;
+
+            if (filter !== undefined) {
+                // term & filter
+                isTerm = true;
+                isFilter = true;
+                term = termOrFilter as string;
+            } else if (typeof termOrFilter === 'string') {
+                // just term
+                isTerm = true;
+                isFilter = false;
+                term = termOrFilter as string;
+            } else {
+                // just filter
+                isTerm = false;
+                isFilter = true;
+                filter = termOrFilter as PatientPatch;
+            }
+
+            let stringToCheck: string;
+            let filterMatch: boolean = false;
+            MemDao.PATIENTS.forEach((patient) => {
+
+                if (isFilter) {
+    
+                    // check if patient passes filter
+                    for (let [key, val] of Object.entries(filter as PatientPatch)) {
+    
+                        if ((patient as any)[key] === val) {
+                            filterMatch = true;
+                            break;
+                        }
+                    }
+    
+                    if (!filterMatch) {
+                        // go to next if not
+                        return;
+                    }
+                }
+                
+                if (isTerm) {
+                    
+                    // check if patient contains term
+                    stringToCheck = `${patient.firstName}${patient.lastName}${patient.telecom}`
+                    if (!stringToCheck.toLowerCase().includes((term as string).toLowerCase())) {
+                        // go to next if not
+                        return;
+                    }
+                }
+    
+                // if we made it this far, all good
+                ++returnLength;
+    
+                // reset for next patient
+                filterMatch = false;
+            });
+
+        }
+
+        return returnLength;
     }
 
     private throwIt(errorCode: string, resrc?: string[]) {
