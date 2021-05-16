@@ -24,4 +24,14 @@ export const patientForms: PatientPost[] = [{
     firstName: 'Zap',
     lastName: 'Branigan',
     isActive: false
+}, {
+    dob: '1995-01-02',
+    firstName: 'Milhouse',
+    lastName: 'Van Houten',
+    telecom: '9876876'
+}, {
+    dob: '1978-10-22',
+    firstName: 'Hank',
+    lastName: 'Scorpio',
+    isActive: true
 }];

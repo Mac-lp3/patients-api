@@ -10,6 +10,15 @@ async function init() {
         host: HOST
     });
 
+    server.route({
+        method: 'GET',
+        path: '/api/patients',
+        handler: (request, h) => {
+
+            return 'Hello World!';
+        }
+    });
+
     await server.start();
     console.log('...Server up');
 

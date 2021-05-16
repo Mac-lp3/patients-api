@@ -4,10 +4,20 @@ interface BaseResponse {
     metadata: any;
 }
 
-export interface ErrorResponse extends BaseResponse {
-    error: ApiError;
+interface ErrorResponse extends BaseResponse {
+    error: any;
 }
 
-export interface ResourceResponse extends BaseResponse {
-    payload: any;
+interface ResourceResponse extends BaseResponse {
+    payload: any | any[];
 }
+
+export type ApiResponse = ErrorResponse | ResourceResponse;
+
+let resp: ApiResponse;
+
+resp = {
+    metadata: {},
+    error: {},
+    payload: []
+};
