@@ -2,8 +2,6 @@
 
 * ~~hasher investigations & pattern~~
 * ~~generate some test patients~~
-* pattern for metadata
-* pattern for error/code mapping
 * implement & test dao methods
     - ~~add~~
     - ~~get~~
@@ -11,6 +9,8 @@
     - ~~put~~
     - ~~delete~~
     - query
+* pattern for metadata
+* pattern for error/code mapping
 * request validation pattern
 * response handling pattern
 * error handling pattern
@@ -18,6 +18,10 @@
 * error handler impl
 
 * creation/constructor/builder methods for patient objects?
+
+# Optimizations
+
+* async search function
 
 # Notes for them
 

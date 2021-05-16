@@ -17,6 +17,26 @@ export class MemDao {
         });
     }
 
+    // overloads
+    public query(term: string): Patient[];
+    public query(filter: PatientPatch): Patient[];
+    public query(term: string, filter: PatientPatch): Patient[];
+    public query(termOrFilter: string | PatientPatch, filter?: PatientPatch): Patient[] {
+        // check if 1st parm is str
+
+        let stringToCheck: string;
+        const resultSet: Patient[] = [];
+        MemDao.PATIENTS.forEach((patient, id) => {
+            
+            // TODO only if term given
+            stringToCheck = `${patient.firstName}${patient.lastName}${patient.telecom}`
+
+
+        })
+
+        return resultSet;
+    }
+
     public addPatient(form: PatientPost): Patient {
         const generatedID = getID(form);
         
@@ -132,7 +152,6 @@ export class MemDao {
         };
 
         throw er;
-        
     }
 }
 
