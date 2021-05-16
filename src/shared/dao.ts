@@ -7,9 +7,8 @@ export class MemDao {
 
     private static PATIENTS: Map<string, Patient> = new Map();
     
-    private static ERR_SUMMARY: string = 'Exception from database layer';
-    private static NOT_FOUND_ERR_MSG: string = 'Could not find a patient with the provided ID.'
-    private static NOT_UNIQUE_ERR_MSG: string = 'Provided firstName, lastName, and DoB did not produce a unique hash. Change either property a bit more.'
+    private static NOT_FOUND_ERR_CODE: string = '100'
+    private static NOT_UNIQUE_ERR_CODE: string = '101'
 
     constructor() {
         patientForms.forEach(post => {
@@ -41,7 +40,7 @@ export class MemDao {
         const generatedID = getID(form);
         
         if(this.exists(generatedID)) {
-            this.throwIt(MemDao.NOT_UNIQUE_ERR_MSG);
+            this.throwIt(MemDao.NOT_UNIQUE_ERR_CODE);
         }
 
         const patient: Patient = {
@@ -64,7 +63,7 @@ export class MemDao {
     public getPatient(patientID: string): Patient {
 
         if(!this.exists(patientID)) {
-            this.throwIt(MemDao.NOT_FOUND_ERR_MSG);
+            this.throwIt(MemDao.NOT_FOUND_ERR_CODE);
         }
 
         const patient = MemDao.PATIENTS.get(patientID) as Patient;
@@ -83,7 +82,7 @@ export class MemDao {
      */
     public putPatient(patientID: string, form: PatientPut): Patient {
         if(!this.exists(patientID)) {
-            this.throwIt(MemDao.NOT_FOUND_ERR_MSG);
+            this.throwIt(MemDao.NOT_FOUND_ERR_CODE);
         }
 
         // since this may not generate a new ID, remove the current one to prevent an error
@@ -113,7 +112,7 @@ export class MemDao {
      */
     public patchPatient(patientID: string, form: PatientPatch): Patient {
         if(!this.exists(patientID)) {
-            this.throwIt(MemDao.NOT_FOUND_ERR_MSG);
+            this.throwIt(MemDao.NOT_FOUND_ERR_CODE);
         }
 
         const currentPatient = this.getPatient(patientID);
@@ -143,11 +142,11 @@ export class MemDao {
         MemDao.PATIENTS.delete(id);
     }
 
-    private throwIt(message: string, resrc?: string[]) {
+    private throwIt(errorCode: string, resrc?: string[]) {
 
         const er: ApiError = {
-            summary: MemDao.ERR_SUMMARY,
-            details: message,
+            code: errorCode,
+            details: '',
             resources: resrc ? resrc : []
         };
 

@@ -42,30 +42,21 @@ describe('memory based dao', function() {
             dao.getPatient('lol idk');
             ok(false);
         } catch (ex) {
-            strictEqual(
-                (ex as ApiError).summary,
-                'Exception from database layer'
-            );
+            strictEqual((ex as ApiError).code, '100');
         }
 
         try {
             dao.putPatient('lol idk', newPatientForm);
             ok(false);
         } catch (ex) {
-            strictEqual(
-                (ex as ApiError).summary,
-                'Exception from database layer'
-            );
+            strictEqual((ex as ApiError).code, '100');
         }
 
         try {
             dao.patchPatient('lol idk', newPatientForm);
             ok(false);
         } catch (ex) {
-            strictEqual(
-                (ex as ApiError).summary,
-                'Exception from database layer'
-            );
+            strictEqual((ex as ApiError).code, '100');
         }
     })
 
@@ -90,10 +81,7 @@ describe('memory based dao', function() {
                 dao.addPatient(patientForms[0]);
                 ok(false);
             } catch(ex) {
-                strictEqual(
-                    (ex as ApiError).summary,
-                    'Exception from database layer'
-                );
+                strictEqual((ex as ApiError).code, '101');
             }
         })
 

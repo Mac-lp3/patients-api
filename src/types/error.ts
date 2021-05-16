@@ -1,5 +1,5 @@
 export interface ApiError {
-    summary: string;
+    code: string;
     details: string;
     resources: string[];
 }
