@@ -8,6 +8,8 @@
 * ~~request validation impl & test~~
 * ~~error handling pattern~~
 * ~~Validatior <-> Dao input interfaces~~
+* add and test response builders
+* add copy command to build process
 * add and test endpoints
     + Promise.all() and assemble
 * response handling pattern
@@ -28,6 +30,7 @@
 * primer on TypeScript vs Java type system
 * search func behavior
 * use of length & async plan
+* use of csv and json (.ts) for some data
 * could break it out more, but wanted to keep it simple/readable
 * would be good to use something like swagger / protocol buffers
 * hypothetical deployment 

@@ -1,26 +1,50 @@
 import { Request } from 'hapi';
 import * as validate from './validator';
 import { MemDao } from '../../shared/dao';
+import { ApiError } from '../../types/error';
+import { build } from '../../shared/response';
 import { ApiResponse } from '../../types/response';
 
-let dao: MemDao;
+// TODO assign this
+let dao: MemDao = new MemDao();
 
+/**
+ * 200
+ * @param request 
+ * @returns 
+ */
 export async function getPatientCollection(request: Request): Promise<ApiResponse> {
 
-    try {
-        // extract & validate query params
-        const daoInput = validate.getPatientCollection(request.query);
+    let meta: any = {};
+    let rawPayload: any;
 
-        // TODO get the data and metadata
-        //const patients = dao.query();
+    try {
+
+        const daoInput = validate.queryParams(request.query);
+        
+        const [patients, total] = await Promise.all([
+            dao.findBy(daoInput),
+            dao.total(daoInput)
+        ]);
+
+        meta.total = total;
+        meta.httpCode = total > 0 ? '200' : '204'
+        rawPayload = patients;
 
     } catch (ex) {
-        // TODO build resp with exception
+
+        if (ex instanceof ApiError) {
+            rawPayload = ex;
+        } else {
+            console.log(ex);
+            rawPayload = new ApiError('000', 'Uncaught exception in the validation or DB layer. Double check inputs.', []);
+        }
+        
     }
 
-    // TODO build with resource
+    const resp: ApiResponse = await build(meta, rawPayload);
     
-    return {} as ApiResponse;
+    return resp;
 }
 
 export async function postPatientCollection(request: Request): Promise<ApiResponse> {

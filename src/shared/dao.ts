@@ -87,7 +87,10 @@ export class MemDao {
         const generatedID = getID(form);
         
         if(await this.exists(generatedID)) {
-            this.throwIt(MemDao.NOT_UNIQUE_ERR_CODE);
+            this.throwIt(
+                MemDao.NOT_UNIQUE_ERR_CODE,
+                `A patient with ID ${generatedID} already exists. This string is generated from firstName, lastName, and DoB. Make any of those values more unique.`
+            );
         }
 
         const patient: Patient = {
@@ -110,7 +113,10 @@ export class MemDao {
     public async getPatient(patientID: string): Promise<Patient> {
 
         if(!await this.exists(patientID)) {
-            this.throwIt(MemDao.NOT_FOUND_ERR_CODE);
+            this.throwIt(
+                MemDao.NOT_FOUND_ERR_CODE,
+                `Could not GET patient with ID ${patientID} because one could not be found.`
+            );
         }
 
         const patient = MemDao.PATIENTS.get(patientID) as Patient;
@@ -129,7 +135,10 @@ export class MemDao {
      */
     public async putPatient(patientID: string, form: PatientInput): Promise<Patient> {
         if(!await this.exists(patientID)) {
-            this.throwIt(MemDao.NOT_FOUND_ERR_CODE);
+            this.throwIt(
+                MemDao.NOT_FOUND_ERR_CODE,
+                `Could not apply PUT because patient with ID ${patientID} could not be found.`
+            );
         }
 
         // since this may not generate a new ID, remove the current one to prevent an error
@@ -159,7 +168,10 @@ export class MemDao {
      */
     public async patchPatient(patientID: string, form: PatientInput): Promise<Patient> {
         if(!await this.exists(patientID)) {
-            this.throwIt(MemDao.NOT_FOUND_ERR_CODE);
+            this.throwIt(
+                MemDao.NOT_FOUND_ERR_CODE,
+                `Could not apply PATCH because patient with ID ${patientID} could not be found.`
+            );
         }
 
         const currentPatient = await this.getPatient(patientID);
@@ -194,7 +206,7 @@ export class MemDao {
      * General method to get the complete size of the Patients collection, after filters have been applied.
      * This number can be used to populate a UI or help with pagination.
      */
-    public async length(input: ValidatedInput<PatientInput>): Promise<number> {
+    public async total(input: ValidatedInput<PatientInput>): Promise<number> {
 
         const generalInputs = input.generalInput;
         const resourceInputs = input.resourceInput;
@@ -246,14 +258,9 @@ export class MemDao {
         return returnLength;
     }
 
-    private throwIt(errorCode: string, resrc?: string[]) {
+    private throwIt(errorCode: string, desc: string, resrc?: string[]) {
 
-        const er: ApiError = {
-            code: errorCode,
-            details: '',
-            resources: resrc ? resrc : []
-        };
+        throw new ApiError(errorCode, desc, resrc ? resrc : []);
 
-        throw er;
     }
 }

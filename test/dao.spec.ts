@@ -158,7 +158,7 @@ describe('memory based dao', function() {
 
         // test just filter
         let queryResults = await dao.findBy({ generalInput: {}, resourceInput: {firstName: 'Bart'} });
-        let count = await dao.length({ generalInput: {}, resourceInput: {firstName: 'Bart'} });
+        let count = await dao.total({ generalInput: {}, resourceInput: {firstName: 'Bart'} });
         strictEqual(count, 1);
         strictEqual(queryResults.length, 1);
         strictEqual(queryResults[0].firstName, 'Bart');
@@ -166,7 +166,7 @@ describe('memory based dao', function() {
 
         // test just for term
         queryResults = await dao.findBy({ generalInput: { query: 'Bart'}, resourceInput: {} });
-        count = await dao.length({ generalInput: { query: 'Bart'}, resourceInput: {} });
+        count = await dao.total({ generalInput: { query: 'Bart'}, resourceInput: {} });
         strictEqual(count, 1);
         strictEqual(queryResults.length, 1);
         strictEqual(queryResults[0].firstName, 'Bart');
@@ -180,7 +180,7 @@ describe('memory based dao', function() {
             telecom: '8675309'
         });
         queryResults = await dao.findBy({ generalInput: { query: 'Simpson' }, resourceInput: {} });
-        count = await dao.length({ generalInput: { query: 'Simpson' }, resourceInput: {} });
+        count = await dao.total({ generalInput: { query: 'Simpson' }, resourceInput: {} });
         strictEqual(count, 2);
         strictEqual(queryResults.length, 2);
         strictEqual(queryResults[0].firstName, 'Bart');

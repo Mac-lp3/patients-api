@@ -1,9 +1,3 @@
-export interface ApiError {
-    code: string;
-    details: string;
-    resources: string[];
-}
-
 abstract class BaseError {
     public details: string;
 
@@ -15,3 +9,14 @@ abstract class BaseError {
 export class TypeValidationError extends BaseError { }
 
 export class RequiredInputError extends BaseError { }
+
+export class ApiError extends BaseError{
+    public code: string;
+    public resources: string[];
+
+    constructor(code: string, details: string, resources: string[]) {
+        super(details);
+        this.code = code;
+        this.resources = resources;
+    }
+}

@@ -1,13 +1,24 @@
 interface BaseResponse {
-    metadata: any;
+    metadata: {
+        total?: number;
+        httpCode: string;
+        [key: string]: any;
+    };
 }
 
-interface ErrorResponse extends BaseResponse {
-    error: any;
+export interface ErrorResponse extends BaseResponse {
+    error: {
+        summary: string;
+        details: string;
+        resources: string[];
+    };
 }
 
-interface ResourceResponse extends BaseResponse {
+export interface ResourceResponse extends BaseResponse {
     payload: any | any[];
 }
 
+/**
+ * 
+ */
 export type ApiResponse = ErrorResponse | ResourceResponse;
