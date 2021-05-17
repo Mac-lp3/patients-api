@@ -13,40 +13,30 @@ export class MemDao {
     private static NOT_UNIQUE_ERR_CODE: string = '101'
 
     constructor() {
+
+        console.log('Loading in patient data...')
+
         // read in the dummy data
         patientForms.forEach(post => {
             this.addPatient(post);
         });
     }
 
-    public async query(term: string): Promise<Patient[]>;
-    public async query(filter: PatientPatch): Promise<Patient[]>;
-    public async query(term: string, filter: PatientPatch): Promise<Patient[]>;
-    public async query(termOrFilter: string | PatientPatch, filter?: PatientPatch): Promise<Patient[]> {
+    /**
+     * Used to get & paginate over all patients unless a search term/filter have been provided.
+     * 
+     * @param resourceInputs 
+     * @param generalInputs ATM only supports query
+     * @returns 
+     */
+    public async findBy(resourceInputs: any = {}, generalInputs: any = {}): Promise<Patient[]> {
+        // TODO interfaces for the inputs
 
-        let term: string;
-        let isTerm: boolean;
-        let isFilter: boolean;
+        const term = generalInputs.query ? generalInputs.query.toLowerCase() : false;
+        const isFilter = Object.keys(resourceInputs).length > 0 ? true: false;
 
-        // apply just a search term, filter, or both?
-        if(typeof termOrFilter === 'string') {
-            term = termOrFilter;
-            if(filter === undefined) {
-                isTerm = true
-                isFilter = false;
-            } else {
-                isTerm = true
-                isFilter = true;
-            }
-        } else {
-            isTerm = false
-            isFilter = true;
-            filter = termOrFilter;
-        }
-
-        // search for patients that match the criteria
-        let filterMatch: boolean;
         let stringToCheck: string;
+        let isFilterMatch: boolean = false;
         const resultSet: Patient[] = [];
 
         MemDao.PATIENTS.forEach((patient) => {
@@ -54,25 +44,26 @@ export class MemDao {
             if (isFilter) {
 
                 // check if patient passes filter
-                for (let [key, val] of Object.entries(filter as PatientPatch)) {
+                for (let [key, val] of Object.entries(resourceInputs)) {
 
                     if ((patient as any)[key] === val) {
-                        filterMatch = true;
+                        isFilterMatch = true;
                         break;
                     }
                 }
 
-                if (!filterMatch) {
+                if (!isFilterMatch) {
                     // go to next if not
                     return;
                 }
             }
             
-            if (isTerm) {
+            if (term) {
                 
                 // check if patient contains term
-                stringToCheck = `${patient.firstName}${patient.lastName}${patient.telecom}`
-                if (!stringToCheck.toLowerCase().includes((term as string).toLowerCase())) {
+                stringToCheck = `${patient.firstName}${patient.lastName}${patient.telecom}`.toLowerCase();
+
+                if (!stringToCheck.includes(term)) {
                     // go to next if not
                     return;
                 }
@@ -82,7 +73,7 @@ export class MemDao {
             resultSet.push(patient);
 
             // reset for next patient
-            filterMatch = false;
+            isFilterMatch = false;
         });
 
         return resultSet;
@@ -110,6 +101,10 @@ export class MemDao {
         MemDao.PATIENTS.set(generatedID, patient);
         
         return patient;
+    }
+
+    public async getPatients(): Promise<Patient> {
+        return {} as Patient;
     }
 
     public async getPatient(patientID: string): Promise<Patient> {
@@ -199,81 +194,51 @@ export class MemDao {
      * General method to get the complete size of the Patients collection, after filters have been applied.
      * This number can be used to populate a UI or help with pagination.
      */
-    public async length(): Promise<number>;
-    public async length(term: string): Promise<number>;
-    public async length(filter: PatientPatch): Promise<number>;
-    public async length(term: string, filter: PatientPatch): Promise<number>;
-    public async length(termOrFilter?: string | PatientPatch, filter?: PatientPatch): Promise<number> {
+    public async length(resourceInputs: any = {}, generalInputs: any = {}): Promise<number> {
 
+        const term = generalInputs.query ? generalInputs.query.toLowerCase() : false;
+        const isFilter = Object.keys(resourceInputs).length > 0 ? true: false;
+
+        let stringToCheck: string;
+        let isFilterMatch: boolean = false;
         let returnLength: number = 0;
 
-        if (termOrFilter === undefined) {
+        MemDao.PATIENTS.forEach((patient) => {
 
-            // no args. return length of whole collection
-            returnLength = MemDao.PATIENTS.size;
+            if (isFilter) {
 
-        } else {
+                // check if patient passes filter
+                for (let [key, val] of Object.entries(resourceInputs)) {
 
-            let term: string;
-            let isTerm: boolean;
-            let isFilter: boolean;
+                    if ((patient as any)[key] === val) {
+                        isFilterMatch = true;
+                        break;
+                    }
+                }
 
-            if (filter !== undefined) {
-                // term & filter
-                isTerm = true;
-                isFilter = true;
-                term = termOrFilter as string;
-            } else if (typeof termOrFilter === 'string') {
-                // just term
-                isTerm = true;
-                isFilter = false;
-                term = termOrFilter as string;
-            } else {
-                // just filter
-                isTerm = false;
-                isFilter = true;
-                filter = termOrFilter as PatientPatch;
+                if (!isFilterMatch) {
+                    // go to next if not
+                    return;
+                }
+            }
+            
+            if (term) {
+                
+                // check if patient contains term
+                stringToCheck = `${patient.firstName}${patient.lastName}${patient.telecom}`.toLowerCase();
+
+                if (!stringToCheck.includes(term)) {
+                    // go to next if not
+                    return;
+                }
             }
 
-            let stringToCheck: string;
-            let filterMatch: boolean = false;
-            MemDao.PATIENTS.forEach((patient) => {
+            // if we made it this far, all good
+            ++returnLength;
 
-                if (isFilter) {
-    
-                    // check if patient passes filter
-                    for (let [key, val] of Object.entries(filter as PatientPatch)) {
-    
-                        if ((patient as any)[key] === val) {
-                            filterMatch = true;
-                            break;
-                        }
-                    }
-    
-                    if (!filterMatch) {
-                        // go to next if not
-                        return;
-                    }
-                }
-                
-                if (isTerm) {
-                    
-                    // check if patient contains term
-                    stringToCheck = `${patient.firstName}${patient.lastName}${patient.telecom}`
-                    if (!stringToCheck.toLowerCase().includes((term as string).toLowerCase())) {
-                        // go to next if not
-                        return;
-                    }
-                }
-    
-                // if we made it this far, all good
-                ++returnLength;
-    
-                // reset for next patient
-                filterMatch = false;
-            });
-
-        }
+            // reset for next patient
+            isFilterMatch = false;
+        });
 
         return returnLength;
     }

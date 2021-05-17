@@ -31,3 +31,7 @@ export interface PatientPut {
     telecom?: string;
     isActive?: boolean;
 }
+
+// separate object for the page/general params?
+//  easy way to manage general params/options
+// pass that in as input 1?

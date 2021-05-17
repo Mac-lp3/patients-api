@@ -15,6 +15,11 @@ export const patientForms: PatientPost[] = [{
     lastName: 'Calvo',
     isActive: true
 }, {
+    dob: '1984-08-28',
+    firstName: 'Chris',
+    lastName: 'Calvo',
+    isActive: true
+}, {
     dob: '1966-07-16',
     firstName: 'Willie',
     lastName: 'Grounds-Keeper',

@@ -7,6 +7,7 @@
 * ~~pattern for metadata~~
 * add endpoints 
     + Promise.all() and assemble
+* dedicated db query object that includes limit/offset
 * request validation pattern
 * response handling pattern
 * error handling pattern
@@ -28,6 +29,8 @@
 * downside of updating IDs (is that a problem given the spec tho?)
 * search func behavior
 * use of length & async plan
+* could break it out more, but wanted to keep it simple/readable
+* would be good to use something like swagger / protocol buffers
 * hypothetical deployment 
 
 # QQs

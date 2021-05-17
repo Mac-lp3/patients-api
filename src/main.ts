@@ -1,5 +1,5 @@
 import * as Hapi from 'hapi';
-import * as patients from './handlers/patients';
+import * as patients from './endpoints/patients/handlers';
 
 const PORT = 8080;
 const HOST = '0.0.0.0';

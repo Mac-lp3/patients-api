@@ -158,7 +158,7 @@ describe('memory based dao', function() {
         let patient = await dao.addPatient(queryTestForm1);
 
         // test just filter
-        let queryResults = await dao.query({ firstName: 'Bart' });
+        let queryResults = await dao.findBy({ firstName: 'Bart' });
         let count = await dao.length({ firstName: 'Bart' });
         strictEqual(count, 1);
         strictEqual(queryResults.length, 1);
@@ -166,8 +166,8 @@ describe('memory based dao', function() {
         strictEqual(queryResults[0].id, patient.id);
 
         // test just for term
-        queryResults = await dao.query('Bart');
-        count = await dao.length('Bart');
+        queryResults = await dao.findBy({}, {query: 'Bart'});
+        count = await dao.length({}, {query: 'Bart'});
         strictEqual(count, 1);
         strictEqual(queryResults.length, 1);
         strictEqual(queryResults[0].firstName, 'Bart');
@@ -180,17 +180,17 @@ describe('memory based dao', function() {
             dob: '1997',
             telecom: '8675309'
         });
-        queryResults = await dao.query('Simpson');
-        count = await dao.length('Simpson');
+        queryResults = await dao.findBy({}, { query: 'Simpson' });
+        count = await dao.length({}, { query: 'Simpson' });
         strictEqual(count, 2);
         strictEqual(queryResults.length, 2);
         strictEqual(queryResults[0].firstName, 'Bart');
         strictEqual(queryResults[1].firstName, 'Lisa');
 
         // test both filter and term
-        queryResults = await dao.query({ lastName: 'Simpson' });
+        queryResults = await dao.findBy({ lastName: 'Simpson' });
         strictEqual(queryResults.length, 2);
-        queryResults = await dao.query('Bart', { lastName: 'Simpson' });
+        queryResults = await dao.findBy({ lastName: 'Simpson' }, { query: 'bart' });
         strictEqual(queryResults.length, 1);
         strictEqual(queryResults[0].firstName, 'Bart');
 
