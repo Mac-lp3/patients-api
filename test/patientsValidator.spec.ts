@@ -6,7 +6,7 @@ describe('Patients endpoint validation', function() {
     it('should separate general and resource level params', function() {
         
         // get collection test
-        let paramsToTest = {
+        let paramsToTest: any = {
             limit: 15,
             offset: 30,
             query: 'Maggie',
@@ -28,8 +28,62 @@ describe('Patients endpoint validation', function() {
         strictEqual(results.resourceInput.isActive, true);
         ok(!results.resourceInput.hasOwnProperty('limit'));
         ok(!results.resourceInput.hasOwnProperty('offset'));
-        ok(!results.resourceInput.hasOwnProperty('query'));
+        ok(!results.resourceInput.hasOwnProperty('query'));       
 
+    })
+
+    it('should check for required params', function () {
+
+        // test happy path
+        let results: any;
+        let paramsToTest: any = {
+            firstName: 'Testy',
+            lastName: 'McTesterson',
+            dob: '2000-01-01'
+        };
+
+        try {
+            results = validate.postPatientCollection(paramsToTest);
+            strictEqual(Object.keys(results.resourceInput).length, 3);
+            strictEqual(results.resourceInput.firstName, 'Testy');
+        } catch (ex) {
+            fail();
+        }
+
+        // test sad paths :(
+        paramsToTest = {
+            firstName: 'Testy',
+            lastName: 'McTesterson'
+        };
+        try {
+            results = validate.postPatientCollection(paramsToTest);
+            fail();
+        } catch (ex) {
+            strictEqual(ex.code, '200');
+        }
+
+        paramsToTest = {
+            firstName: 'Testy',
+            dob: '2000-01-01'
+        };
+        try {
+            results = validate.postPatientCollection(paramsToTest);
+            fail();
+        } catch (ex) {
+            strictEqual(ex.code, '200');
+        }
+
+        paramsToTest = {
+            lastName: 'McTesterson',
+            dob: '2000-01-01'
+        };
+        try {
+            results = validate.postPatientCollection(paramsToTest);
+            fail();
+        } catch (ex) {
+            strictEqual(ex.code, '200');
+        }
+        
     })
 
     it('should not allow unexpected types', function() {

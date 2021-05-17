@@ -7,7 +7,7 @@
 * ~~pattern for metadata~~
 * request validation impl & test
     + ~~get collection~~
-    + post collection
+    + ~~post collection~~
     + get instance
     + patch instance
     + put instance
