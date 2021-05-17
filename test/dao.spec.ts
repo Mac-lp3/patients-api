@@ -3,8 +3,7 @@ import { getID } from '../src/shared/hash';
 import { ApiError } from '../src/types/error';
 import { patientForms } from '../src/conf/data';
 import { ok, strictEqual, notStrictEqual } from 'assert';
-import { Patient, PatientPatch } from '../src/types/patient';
-import { strict } from 'assert/strict';
+import { Patient, PatientInput } from '../src/types/patient';
 
 const newPatientForm = {
     firstName: 'Lisa',
@@ -96,7 +95,7 @@ describe('memory based dao', function() {
 
         ok(!testPatient.hasOwnProperty('telecom'));
 
-        let testPatch: PatientPatch = {
+        let testPatch: PatientInput = {
             telecom: '09090909'
         }
         testPatient = await dao.patchPatient(testID, testPatch);
@@ -158,16 +157,16 @@ describe('memory based dao', function() {
         let patient = await dao.addPatient(queryTestForm1);
 
         // test just filter
-        let queryResults = await dao.findBy({ firstName: 'Bart' });
-        let count = await dao.length({ firstName: 'Bart' });
+        let queryResults = await dao.findBy({ generalInput: {}, resourceInput: {firstName: 'Bart'} });
+        let count = await dao.length({ generalInput: {}, resourceInput: {firstName: 'Bart'} });
         strictEqual(count, 1);
         strictEqual(queryResults.length, 1);
         strictEqual(queryResults[0].firstName, 'Bart');
         strictEqual(queryResults[0].id, patient.id);
 
         // test just for term
-        queryResults = await dao.findBy({}, {query: 'Bart'});
-        count = await dao.length({}, {query: 'Bart'});
+        queryResults = await dao.findBy({ generalInput: { query: 'Bart'}, resourceInput: {} });
+        count = await dao.length({ generalInput: { query: 'Bart'}, resourceInput: {} });
         strictEqual(count, 1);
         strictEqual(queryResults.length, 1);
         strictEqual(queryResults[0].firstName, 'Bart');
@@ -180,17 +179,17 @@ describe('memory based dao', function() {
             dob: '1997',
             telecom: '8675309'
         });
-        queryResults = await dao.findBy({}, { query: 'Simpson' });
-        count = await dao.length({}, { query: 'Simpson' });
+        queryResults = await dao.findBy({ generalInput: { query: 'Simpson' }, resourceInput: {} });
+        count = await dao.length({ generalInput: { query: 'Simpson' }, resourceInput: {} });
         strictEqual(count, 2);
         strictEqual(queryResults.length, 2);
         strictEqual(queryResults[0].firstName, 'Bart');
         strictEqual(queryResults[1].firstName, 'Lisa');
 
         // test both filter and term
-        queryResults = await dao.findBy({ lastName: 'Simpson' });
+        queryResults = await dao.findBy({ generalInput: {}, resourceInput: { lastName: 'Simpson' }});
         strictEqual(queryResults.length, 2);
-        queryResults = await dao.findBy({ lastName: 'Simpson' }, { query: 'bart' });
+        queryResults = await dao.findBy({resourceInput: { lastName: 'Simpson' }, generalInput: { query: 'bart' }});
         strictEqual(queryResults.length, 1);
         strictEqual(queryResults[0].firstName, 'Bart');
 

@@ -1,7 +1,7 @@
 import { createHash } from 'crypto';
 import { strictEqual, notStrictEqual } from 'assert';
 import { getID } from '../src/shared/hash';
-import { PatientPut, PatientPost } from '../src/types/patient';
+import { PatientInput } from '../src/types/patient';
 
 const fn0 = 'jane';
 const ln0 = 'doe';
@@ -15,13 +15,13 @@ const fn2 = 'jan';
 const ln2 = 'doe';
 const dob2 = '2020-01-01';
 
-const put1: PatientPut = {
+const put1: PatientInput = {
     dob: dob1,
     firstName: fn1,
     lastName: ln1
 }
 
-const post1: PatientPost = {
+const post1: PatientInput = {
     dob: dob1,
     firstName: fn1,
     lastName: ln1

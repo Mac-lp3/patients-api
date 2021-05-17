@@ -7,7 +7,7 @@
 * ~~pattern for metadata~~
 * ~~request validation impl & test~~
 * ~~error handling pattern~~
-* Validatior <-> Dao input interfaces
+* ~~Validatior <-> Dao input interfaces~~
 * add and test endpoints
     + Promise.all() and assemble
 * response handling pattern
@@ -25,6 +25,7 @@
 * use of patch vs put
 * id pattern: md5/hex first 7
 * downside of updating IDs (is that a problem given the spec tho?)
+* primer on TypeScript vs Java type system
 * search func behavior
 * use of length & async plan
 * could break it out more, but wanted to keep it simple/readable

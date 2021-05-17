@@ -1,6 +1,6 @@
-import { PatientPost } from '../types/patient';
+import { PatientInput } from '../types/patient';
 
-export const patientForms: PatientPost[] = [{
+export const patientForms: PatientInput[] = [{
     dob: '2020-01-01',
     firstName: 'Jane',
     lastName: 'Doe'

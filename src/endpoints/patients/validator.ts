@@ -1,3 +1,5 @@
+import { PatientInput } from '../../types/patient'
+import { ValidatedInput, GeneralQueryInput } from '../../types/validation';
 import { ApiError, RequiredInputError, TypeValidationError } from '../../types/error';
 
 function tryToString(value: any) {
@@ -120,10 +122,10 @@ const patchBodyParamList = [{
     toType: tryToBoolean
 }]
 
-export function queryParams(params: any) {
+export function queryParams(params: any): ValidatedInput<PatientInput> {
 
-    const generalInputObject: any = checkNamesAndTypes(generalParamList, params);
-    const patientInputObject: any = checkNamesAndTypes(queryParamList, params);
+    const generalInputObject: GeneralQueryInput = checkNamesAndTypes(generalParamList, params);
+    const patientInputObject: PatientInput = checkNamesAndTypes(queryParamList, params);
 
     return {
         generalInput: generalInputObject,
@@ -132,33 +134,52 @@ export function queryParams(params: any) {
     
 }
 
-export function postCollectionBody(params: any) {
+export function postCollectionBody(params: any): ValidatedInput<PatientInput> {
 
-    const daoInput = checkNamesAndTypes(postAndPutBodyParamList, params);
+    const daoInput: PatientInput = checkNamesAndTypes(postAndPutBodyParamList, params);
 
     return {
-        generalInput: undefined,
+        generalInput: {},
         resourceInput: daoInput
     }
 }
 
-export function patchInstanceBody(params: any) {
+export function patchInstanceBody(params: any): ValidatedInput<PatientInput> {
 
-    const daoInput = checkNamesAndTypes(patchBodyParamList, params);
+    const daoInput: PatientInput = checkNamesAndTypes(patchBodyParamList, params);
 
     return {
-        generalInput: undefined,
+        generalInput: {},
         resourceInput: daoInput
     }
 }
 
-export function putInstanceBody(params: any) {
+export function putInstanceBody(params: any): ValidatedInput<PatientInput> {
 
     const daoInput = checkNamesAndTypes(postAndPutBodyParamList, params);
 
     return {
-        generalInput: undefined,
+        generalInput: {},
         resourceInput: daoInput
+    }
+}
+
+export function patientID(patientID: string) {
+
+    let errDetails: string | undefined;
+    if (patientID.length !== 7) {
+        errDetails = `IDs must be exactly 7 characters. Found ${patientID.length}.`
+    } else if (/^[a-f0-9]{7}$/.test('id')) {
+        errDetails = `Given ID contains illegal characters. Only 0-9 and a-f are allowed.`
+    }
+
+    if (errDetails) {
+        const er: ApiError = {
+            code: '201',
+            details: errDetails,
+            resources: []
+        }
+        throw er;
     }
 }
 
@@ -208,23 +229,4 @@ function checkNamesAndTypes(paramList: any[], userParams: any) {
 
     return inputObject;
 
-}
-
-export function patientID(patientID: string) {
-
-    let errDetails: string | undefined;
-    if (patientID.length !== 7) {
-        errDetails = `IDs must be exactly 7 characters. Found ${patientID.length}.`
-    } else if (/^[a-f0-9]{7}$/.test('id')) {
-        errDetails = `Given ID contains illegal characters. Only 0-9 and a-f are allowed.`
-    }
-
-    if (errDetails) {
-        const er: ApiError = {
-            code: '201',
-            details: errDetails,
-            resources: []
-        }
-        throw er;
-    }
 }

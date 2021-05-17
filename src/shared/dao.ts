@@ -1,7 +1,8 @@
 import { getID } from '../shared/hash';
 import { ApiError } from '../types/error';
 import { patientForms } from '../conf/data';
-import { Patient, PatientPost, PatientPut, PatientPatch } from '../types/patient';
+import { ValidatedInput } from '../types/validation'
+import { Patient, PatientInput } from '../types/patient';
 
 /**
  * Patient data access object. Reads patient data from src/conf/data.ts into memory on construction.
@@ -29,8 +30,11 @@ export class MemDao {
      * @param generalInputs ATM only supports query
      * @returns 
      */
-    public async findBy(resourceInputs: any = {}, generalInputs: any = {}): Promise<Patient[]> {
+    public async findBy(input: ValidatedInput<PatientInput>): Promise<Patient[]> {
         // TODO interfaces for the inputs
+
+        const generalInputs = input.generalInput;
+        const resourceInputs = input.resourceInput;
 
         const term = generalInputs.query ? generalInputs.query.toLowerCase() : false;
         const isFilter = Object.keys(resourceInputs).length > 0 ? true: false;
@@ -79,7 +83,7 @@ export class MemDao {
         return resultSet;
     }
 
-    public async addPatient(form: PatientPost): Promise<Patient> {
+    public async addPatient(form: PatientInput): Promise<Patient> {
         const generatedID = getID(form);
         
         if(await this.exists(generatedID)) {
@@ -88,9 +92,9 @@ export class MemDao {
 
         const patient: Patient = {
             id: generatedID,
-            firstName: form.firstName,
-            lastName: form.lastName,
-            dob: form.dob,
+            firstName: form.firstName as string,
+            lastName: form.lastName as string,
+            dob: form.dob as string,
             created: new Date().toISOString()
         }
 
@@ -123,7 +127,7 @@ export class MemDao {
      * @param form 
      * @returns The updated Patient object, potentially with a new ID
      */
-    public async putPatient(patientID: string, form: PatientPut): Promise<Patient> {
+    public async putPatient(patientID: string, form: PatientInput): Promise<Patient> {
         if(!await this.exists(patientID)) {
             this.throwIt(MemDao.NOT_FOUND_ERR_CODE);
         }
@@ -153,7 +157,7 @@ export class MemDao {
      * @param form 
      * @returns the updated Patient object, potentially with a new ID
      */
-    public async patchPatient(patientID: string, form: PatientPatch): Promise<Patient> {
+    public async patchPatient(patientID: string, form: PatientInput): Promise<Patient> {
         if(!await this.exists(patientID)) {
             this.throwIt(MemDao.NOT_FOUND_ERR_CODE);
         }
@@ -190,7 +194,10 @@ export class MemDao {
      * General method to get the complete size of the Patients collection, after filters have been applied.
      * This number can be used to populate a UI or help with pagination.
      */
-    public async length(resourceInputs: any = {}, generalInputs: any = {}): Promise<number> {
+    public async length(input: ValidatedInput<PatientInput>): Promise<number> {
+
+        const generalInputs = input.generalInput;
+        const resourceInputs = input.resourceInput;
 
         const term = generalInputs.query ? generalInputs.query.toLowerCase() : false;
         const isFilter = Object.keys(resourceInputs).length > 0 ? true: false;

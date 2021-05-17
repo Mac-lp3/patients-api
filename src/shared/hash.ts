@@ -1,22 +1,24 @@
 import { createHash } from 'crypto';
-import { PatientPut, PatientPost } from '../types/patient';
+import { PatientInput } from '../types/patient';
 
 const ID_LENGTH = 7;
 
 // overload signatures
-export function getID(patientForm: PatientPut | PatientPost): string;
+export function getID(patientForm: PatientInput): string;
 export function getID(firstName: string, lastName: string, dob: string): string;
-export function getID(formOrFirstName: string | PatientPut | PatientPost, lastName?: string, dob?: string): string {
+export function getID(formOrFirstName: string | PatientInput, lastName?: string, dob?: string): string {
 
     // get value of first name, depending on input
     let fn: string;
     let ln: string;
     let db: string;
+
     if (lastName === undefined) {
 
-        fn = (formOrFirstName as PatientPut | PatientPost).firstName;
-        ln = (formOrFirstName as PatientPut | PatientPost).lastName;
-        db = (formOrFirstName as PatientPut | PatientPost).dob;
+        // safe as form should have been validated before this
+        fn = (formOrFirstName as PatientInput).firstName as string;
+        ln = (formOrFirstName as PatientInput).lastName as string;
+        db = (formOrFirstName as PatientInput).dob as string;
 
     } else {
 
