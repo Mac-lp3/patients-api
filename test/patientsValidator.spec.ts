@@ -14,7 +14,7 @@ describe('Patients endpoint validation', function() {
             isActive: true
         };
 
-        let results = validate.getPatientCollection(paramsToTest);
+        let results = validate.queryParams(paramsToTest);
 
         strictEqual(Object.keys(results.generalInput).length, 3);
         strictEqual(results.generalInput.limit, 15);
@@ -43,7 +43,7 @@ describe('Patients endpoint validation', function() {
         };
 
         try {
-            results = validate.postPatientCollection(paramsToTest);
+            results = validate.postCollectionBody(paramsToTest);
             strictEqual(Object.keys(results.resourceInput).length, 3);
             strictEqual(results.resourceInput.firstName, 'Testy');
         } catch (ex) {
@@ -56,7 +56,7 @@ describe('Patients endpoint validation', function() {
             lastName: 'McTesterson'
         };
         try {
-            results = validate.postPatientCollection(paramsToTest);
+            results = validate.postCollectionBody(paramsToTest);
             fail();
         } catch (ex) {
             strictEqual(ex.code, '200');
@@ -67,7 +67,7 @@ describe('Patients endpoint validation', function() {
             dob: '2000-01-01'
         };
         try {
-            results = validate.postPatientCollection(paramsToTest);
+            results = validate.postCollectionBody(paramsToTest);
             fail();
         } catch (ex) {
             strictEqual(ex.code, '200');
@@ -78,7 +78,7 @@ describe('Patients endpoint validation', function() {
             dob: '2000-01-01'
         };
         try {
-            results = validate.postPatientCollection(paramsToTest);
+            results = validate.postCollectionBody(paramsToTest);
             fail();
         } catch (ex) {
             strictEqual(ex.code, '200');
@@ -91,14 +91,14 @@ describe('Patients endpoint validation', function() {
         // get collection test
         let results: any;
         try {
-            results = validate.getPatientCollection({ offset: '2021-05-15' });
+            results = validate.queryParams({ offset: '2021-05-15' });
             fail();
         } catch (ex) {
             strictEqual(ex.code, '200');
         }
 
         try {
-            results = validate.getPatientCollection({ isActive: 'maybe' });
+            results = validate.queryParams({ isActive: 'maybe' });
             fail();
         } catch (ex) {
             strictEqual(ex.code, '200');
@@ -116,10 +116,14 @@ describe('Patients endpoint validation', function() {
             town: 'Shelbyville'
         };
 
-        let results = validate.getPatientCollection(paramsToTest);
+        let results = validate.queryParams(paramsToTest);
         strictEqual(Object.keys(results.generalInput).length, 1)
         strictEqual(Object.keys(results.resourceInput).length, 1)
 
+    })
+
+    it('should only allow acceptable IDs', function () {
+        
     })
     
 })

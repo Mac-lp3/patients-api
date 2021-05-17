@@ -103,10 +103,6 @@ export class MemDao {
         return patient;
     }
 
-    public async getPatients(): Promise<Patient> {
-        return {} as Patient;
-    }
-
     public async getPatient(patientID: string): Promise<Patient> {
 
         if(!await this.exists(patientID)) {

@@ -5,21 +5,13 @@
 * ~~implement & test dao methods~~
 * ~~pattern for error/code mapping~~
 * ~~pattern for metadata~~
-* request validation impl & test
-    + ~~get collection~~
-    + ~~post collection~~
-    + get instance
-    + patch instance
-    + put instance
-    + delete instance
+* ~~request validation impl & test~~
+* ~~error handling pattern~~
+* Validatior <-> Dao input interfaces
 * add and test endpoints
     + Promise.all() and assemble
-* dedicated db query object that includes limit/offset
 * response handling pattern
-* error handling pattern
 * limit/offset to query function
-* request/response builder?
-* error handler impl
 
 * creation/constructor/builder methods for patient objects?
 

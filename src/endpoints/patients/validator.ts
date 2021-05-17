@@ -39,7 +39,7 @@ const generalParamList = [{
     toType: tryToString
 }];
 
-const getPatientParamList = [{
+const queryParamList = [{
     name: 'firstName',
     isRequired: false,
     type: 'string',
@@ -66,12 +66,65 @@ const getPatientParamList = [{
     toType: tryToBoolean
 }]
 
-export function getPatientCollection(params: any) {
+const postAndPutBodyParamList = [{
+    name: 'firstName',
+    isRequired: true,
+    type: 'string',
+    toType: tryToString
+}, {
+    name: 'lastName',
+    isRequired: true,
+    type: 'string',
+    toType: tryToString
+}, {
+    name: 'dob',
+    isRequired: true,
+    type: 'string',
+    toType: tryToString
+}, {
+    name: 'telecom',
+    isRequired: false,
+    type: 'string',
+    toType: tryToString
+}, {
+    name: 'isActive',
+    isRequired: false,
+    type: 'boolean',
+    toType: tryToBoolean
+}]
+
+const patchBodyParamList = [{
+    name: 'firstName',
+    isRequired: false,
+    type: 'string',
+    toType: tryToString
+}, {
+    name: 'lastName',
+    isRequired: false,
+    type: 'string',
+    toType: tryToString
+}, {
+    name: 'dob',
+    isRequired: false,
+    type: 'string',
+    toType: tryToString
+}, {
+    name: 'telecom',
+    isRequired: false,
+    type: 'string',
+    toType: tryToString
+}, {
+    name: 'isActive',
+    isRequired: false,
+    type: 'boolean',
+    toType: tryToBoolean
+}]
+
+export function queryParams(params: any) {
 
     const generalInputObject: any = checkNamesAndTypes(generalParamList, params);
-    const patientInputObject: any = checkNamesAndTypes(getPatientParamList, params);
+    const patientInputObject: any = checkNamesAndTypes(queryParamList, params);
 
-    // TODO interfaces for these
     return {
         generalInput: generalInputObject,
         resourceInput: patientInputObject
@@ -79,37 +132,29 @@ export function getPatientCollection(params: any) {
     
 }
 
-const postPatientParamList = [{
-    name: 'firstName',
-    isRequired: true,
-    type: 'string',
-    toType: tryToString
-}, {
-    name: 'lastName',
-    isRequired: true,
-    type: 'string',
-    toType: tryToString
-}, {
-    name: 'dob',
-    isRequired: true,
-    type: 'string',
-    toType: tryToString
-}, {
-    name: 'telecom',
-    isRequired: false,
-    type: 'string',
-    toType: tryToString
-}, {
-    name: 'isActive',
-    isRequired: false,
-    type: 'boolean',
-    toType: tryToBoolean
-}]
+export function postCollectionBody(params: any) {
 
-export function postPatientCollection(params: any) {
+    const daoInput = checkNamesAndTypes(postAndPutBodyParamList, params);
 
-    // collection POST method does not use query params
-    const daoInput = checkNamesAndTypes(postPatientParamList, params);
+    return {
+        generalInput: undefined,
+        resourceInput: daoInput
+    }
+}
+
+export function patchInstanceBody(params: any) {
+
+    const daoInput = checkNamesAndTypes(patchBodyParamList, params);
+
+    return {
+        generalInput: undefined,
+        resourceInput: daoInput
+    }
+}
+
+export function putInstanceBody(params: any) {
+
+    const daoInput = checkNamesAndTypes(postAndPutBodyParamList, params);
 
     return {
         generalInput: undefined,
@@ -163,4 +208,23 @@ function checkNamesAndTypes(paramList: any[], userParams: any) {
 
     return inputObject;
 
+}
+
+export function patientID(patientID: string) {
+
+    let errDetails: string | undefined;
+    if (patientID.length !== 7) {
+        errDetails = `IDs must be exactly 7 characters. Found ${patientID.length}.`
+    } else if (/^[a-f0-9]{7}$/.test('id')) {
+        errDetails = `Given ID contains illegal characters. Only 0-9 and a-f are allowed.`
+    }
+
+    if (errDetails) {
+        const er: ApiError = {
+            code: '201',
+            details: errDetails,
+            resources: []
+        }
+        throw er;
+    }
 }

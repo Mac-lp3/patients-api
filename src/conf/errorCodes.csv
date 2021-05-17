@@ -1,5 +1,6 @@
 code,responseCode,summary
-000,501,"Unknown error"
-100,404,"Could not find a patient with the provided ID"
+000,501,"Unknown error."
+100,404,"Could not find a patient with the provided ID."
 101,409,"Provided firstName, lastName, and DoB did not produce a unique hash. Change either property a bit more."
-200,400,"Could not parse one of the provided query parameters"
+200,400,"Could not parse one of the provided query parameters."
+201,400,"Provided patient ID is not of expected format."
