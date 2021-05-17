@@ -8,8 +8,8 @@ let dao: MemDao;
 export async function getPatientCollection(request: Request): Promise<ApiResponse> {
 
     try {
-        // validate & extract inputs
-        const daoInput = validate.getPatientCollection(request.params);
+        // extract & validate query params
+        const daoInput = validate.getPatientCollection(request.query);
 
         // TODO get the data and metadata
         //const patients = dao.query();

@@ -5,10 +5,16 @@
 * ~~implement & test dao methods~~
 * ~~pattern for error/code mapping~~
 * ~~pattern for metadata~~
-* add endpoints 
+* request validation impl & test
+    + ~~get collection~~
+    + post collection
+    + get instance
+    + patch instance
+    + put instance
+    + delete instance
+* add and test endpoints
     + Promise.all() and assemble
 * dedicated db query object that includes limit/offset
-* request validation pattern
 * response handling pattern
 * error handling pattern
 * limit/offset to query function
