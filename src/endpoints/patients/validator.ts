@@ -124,8 +124,15 @@ const patchBodyParamList = [{
 
 export function queryParams(params: any): ValidatedInput<PatientInput> {
 
-    const generalInputObject: GeneralQueryInput = checkNamesAndTypes(generalParamList, params);
-    const patientInputObject: PatientInput = checkNamesAndTypes(queryParamList, params);
+    // Ok for these to be null with GET requests
+    let patientInputObject: PatientInput = {};
+    let generalInputObject: GeneralQueryInput = {};
+
+    // null check
+    if ( params && Object.keys(params).length > 0 ) {
+        patientInputObject = checkNamesAndTypes(queryParamList, params);
+        generalInputObject = checkNamesAndTypes(generalParamList, params);
+    }
 
     return {
         generalInput: generalInputObject,

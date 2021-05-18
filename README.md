@@ -8,14 +8,18 @@
 * ~~request validation impl & test~~
 * ~~error handling pattern~~
 * ~~Validatior <-> Dao input interfaces~~
-* add and test response builders
-* add copy command to build process
+* ~~add and test response builders~~
 * add and test endpoints
-    + Promise.all() and assemble
-* response handling pattern
+    + ~~GET collection~~
+    + GET instance
+    + POST collection
+    + PATCH instance
+    + DELETE instance
+    + PUT instance
+* add copy command to build process
 * limit/offset to query function
-
-* creation/constructor/builder methods for patient objects?
+* document
+* more data
 
 # Optimizations
 
