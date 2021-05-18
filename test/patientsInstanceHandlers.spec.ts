@@ -74,7 +74,7 @@ describe('The patient endpoints handlers', function() {
 
         let req: any = { 
             params: { patientID: '55dd138' },
-            payload: { isActive: false }
+            body: { isActive: false }
         };
 
         let guinea = await getPatientInstance(req);
@@ -111,7 +111,7 @@ describe('The patient endpoints handlers', function() {
 
         let req: any = { 
             params: { patientID: 'f8071a6' },
-            payload: { firstName: 'Troyy' }
+            body: { firstName: 'Troyy' }
         };
 
         let guinea = await getPatientInstance(req);
@@ -132,7 +132,7 @@ describe('The patient endpoints handlers', function() {
         // GET and check before
         let req: any = { 
             params: { patientID: '2799f58' },
-            payload: {}
+            body: {}
         };
         let guinea = await getPatientInstance(req);
 
@@ -143,9 +143,9 @@ describe('The patient endpoints handlers', function() {
         ok((guinea as ResourceResponse).payload.hasOwnProperty('isActive'));
 
         // PUT and check after
-        req.payload.firstName = 'Willie';
-        req.payload.lastName = 'GroundsKeeper';
-        req.payload.dob = '1965-01-01';
+        req.body.firstName = 'Willie';
+        req.body.lastName = 'GroundsKeeper';
+        req.body.dob = '1965-01-01';
 
         let newGuinea = await putPatientInstance(req);
 

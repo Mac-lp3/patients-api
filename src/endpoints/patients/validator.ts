@@ -197,7 +197,7 @@ function checkNamesAndTypes(paramList: any[], userParams: any) {
         // build/extract the general params
         paramList.forEach(param => {
 
-            if (userParams.hasOwnProperty(param.name)) {
+            if (userParams?.hasOwnProperty(param.name)) {
                 propType = param.type;
                 propToCheck = param.name;
                 inputObject[param.name] = param.toType(userParams[param.name]);

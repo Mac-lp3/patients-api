@@ -1,4 +1,4 @@
-import { Request } from 'hapi';
+import { Request } from 'express';
 import * as validate from './validator';
 import { MemDao } from '../../shared/dao';
 import { ApiError } from '../../types/error';
@@ -54,8 +54,7 @@ export async function postPatientCollection(request: Request): Promise<ApiRespon
 
     try {
 
-        const daoInput = validate.postCollectionBody(request.payload);
-
+        const daoInput = validate.postCollectionBody(request.body);
         const patient = await dao.addPatient(daoInput);
 
         meta.total = 1;
@@ -116,7 +115,7 @@ export async function putPatientInstance(request: Request): Promise <ApiResponse
     try {
 
         validate.patientID(request.params.patientID);
-        const daoInput = validate.putInstanceBody(request.payload);
+        const daoInput = validate.putInstanceBody(request.body);
 
         const patient = await dao.putPatient(request.params.patientID, daoInput);
 
@@ -148,7 +147,7 @@ export async function patchPatientInstance(request: Request): Promise <ApiRespon
     try {
 
         validate.patientID(request.params.patientID);
-        const daoInput = validate.patchInstanceBody(request.payload);
+        const daoInput = validate.patchInstanceBody(request.body);
 
         const patient = await dao.patchPatient(request.params.patientID, daoInput);
 

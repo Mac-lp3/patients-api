@@ -1,4 +1,4 @@
-import { Request } from 'hapi';
+import { Request } from 'express';
 import { ok, strictEqual, notStrictEqual, fail } from 'assert';
 import { getPatientCollection, postPatientCollection } from '../src/endpoints/patients/handlers';
 import { ApiResponse, ErrorResponse, ResourceResponse } from '../src/types/response';
@@ -7,7 +7,7 @@ describe('The patient endpoints handlers', function() {
 
     it('should return the list of patients', async function() {
 
-        let resp: ApiResponse = await getPatientCollection({} as Request);
+        let resp: any = await getPatientCollection({} as Request);
 
         ok(resp.metadata.hasOwnProperty('total'));
         strictEqual(resp.metadata.httpCode, '200');
@@ -62,7 +62,7 @@ describe('The patient endpoints handlers', function() {
             lastName: 'Simpson',
             dob: '2000'
         }
-        let req: any = { payload: reqPayload };
+        let req: any = { body: reqPayload };
 
         let resp = await postPatientCollection(req);
 
