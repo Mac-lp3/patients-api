@@ -174,19 +174,14 @@ export function putInstanceBody(params: any): ValidatedInput<PatientInput> {
 export function patientID(patientID: string) {
 
     let errDetails: string | undefined;
-    if (patientID.length !== 7) {
-        errDetails = `IDs must be exactly 7 characters. Found ${patientID.length}.`
-    } else if (/^[a-f0-9]{7}$/.test('id')) {
+    if (patientID?.length !== 7) {
+        errDetails = `IDs must be exactly 7 characters. Found ${patientID?.length}.`
+    } else if (!/^[a-f0-9]{7}$/.test(patientID)) {
         errDetails = `Given ID contains illegal characters. Only 0-9 and a-f are allowed.`
     }
 
     if (errDetails) {
-        const er: ApiError = {
-            code: '201',
-            details: errDetails,
-            resources: []
-        }
-        throw er;
+        throw new ApiError('201', errDetails, []);
     }
 }
 

@@ -52,7 +52,34 @@ export async function postPatientCollection(request: Request): Promise<ApiRespon
 }
 
 export async function getPatientInstance(request: Request): Promise<ApiResponse> {
-    return {} as ApiResponse;
+
+    let meta: any = {};
+    let rawPayload: any;
+
+    try {
+
+        validate.patientID(request.params.patientID);
+
+        const patient = await dao.getPatient(request.params.patientID);
+
+        meta.total = 1;
+        meta.httpCode = '200';
+        rawPayload = patient;
+
+    } catch (err) {
+
+        if (err instanceof ApiError) {
+            rawPayload = err;
+        } else {
+            console.log(err);
+            rawPayload = new ApiError('000', 'Uncaught exception in the validation or DB layer. Double check inputs.', []);
+        }
+        
+    }
+
+    const resp: ApiResponse = await build(meta, rawPayload);
+    
+    return resp;
 }
 
 export async function putPatientInstance(request: Request): Promise <ApiResponse> {

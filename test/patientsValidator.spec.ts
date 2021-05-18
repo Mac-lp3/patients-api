@@ -124,6 +124,7 @@ describe('Patients endpoint validation', function() {
 
     it('should only allow acceptable IDs', function () {
         
+        //validate.patientID()
     })
     
 })
