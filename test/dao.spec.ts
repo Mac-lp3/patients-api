@@ -12,6 +12,11 @@ const newPatientForm = {
     telecom: '8675309'
 }
 
+const newPatientInput = {
+    generalInput: {},
+    resourceInput: newPatientForm
+}
+
 const dao = new MemDao();
 
 describe('memory based dao', function() {
@@ -45,14 +50,17 @@ describe('memory based dao', function() {
         }
 
         try {
-            await dao.putPatient('lol idk', newPatientForm);
+            await dao.putPatient('lol idk', newPatientInput);
             ok(false);
         } catch (ex) {
             strictEqual((ex as ApiError).code, '100');
         }
 
         try {
-            await dao.patchPatient('lol idk', newPatientForm);
+            await dao.patchPatient('lol idk', { 
+                generalInput: {},
+                resourceInput: newPatientForm
+            });
             ok(false);
         } catch (ex) {
             strictEqual((ex as ApiError).code, '100');
@@ -65,7 +73,7 @@ describe('memory based dao', function() {
         let exists = await dao.exists(id);
         ok(!exists);
 
-        const newPat = await dao.addPatient(newPatientForm);
+        const newPat = await dao.addPatient(newPatientInput);
 
         exists = await dao.exists(newPat.id);
         ok(exists);
@@ -78,7 +86,10 @@ describe('memory based dao', function() {
 
         patientForms.forEach(async pat => {
             try {
-                await dao.addPatient(patientForms[0]);
+                await dao.addPatient({
+                    generalInput: {},
+                    resourceInput: pat
+                });
                 ok(false);
             } catch(ex) {
                 strictEqual((ex as ApiError).code, '101');
@@ -98,7 +109,10 @@ describe('memory based dao', function() {
         let testPatch: PatientInput = {
             telecom: '09090909'
         }
-        testPatient = await dao.patchPatient(testID, testPatch);
+        testPatient = await dao.patchPatient(testID, {
+            generalInput: {},
+            resourceInput: testPatch
+        });
 
         ok(testPatient.hasOwnProperty('telecom'));
         strictEqual(testID, testPatient.id);
@@ -108,7 +122,10 @@ describe('memory based dao', function() {
         testPatch = {
             lastName: 'Smithers'
         }
-        testPatient = await dao.patchPatient(testID, testPatch);
+        testPatient = await dao.patchPatient(testID, {
+            generalInput: {},
+            resourceInput: testPatch
+        });
 
         ok(testPatient.lastName === 'Smithers');
         ok(testID !== testPatient.id);
@@ -126,7 +143,7 @@ describe('memory based dao', function() {
         let testPat = await dao.getPatient(id);
 
         (newPatientForm as any).isActive = true;
-        let newPat = await dao.putPatient(id, newPatientForm);
+        let newPat = await dao.putPatient(id, newPatientInput);
 
         strictEqual(testPat.id, newPat.id);
         ok(newPat.hasOwnProperty('isActive'));
@@ -136,7 +153,7 @@ describe('memory based dao', function() {
         newPatientForm.firstName = 'Sideshow';
         newPatientForm.lastName = 'Bob';
 
-        newPat = await dao.putPatient(id, newPatientForm);
+        newPat = await dao.putPatient(id, newPatientInput);
 
         ok(!await dao.exists(id));
         ok(await dao.exists(newPat.id));
@@ -154,7 +171,10 @@ describe('memory based dao', function() {
             dob: '1995',
             telecom: '8675309'
         }
-        let patient = await dao.addPatient(queryTestForm1);
+        let patient = await dao.addPatient({
+            generalInput: {},
+            resourceInput: queryTestForm1
+        });
 
         // test just filter
         let queryResults = await dao.findBy({ generalInput: {}, resourceInput: {firstName: 'Bart'} });
@@ -174,10 +194,13 @@ describe('memory based dao', function() {
 
         // ensure the term can get multiple results
         await dao.addPatient({
-            firstName: 'Lisa',
-            lastName: 'Simpson',
-            dob: '1997',
-            telecom: '8675309'
+            generalInput: {},
+            resourceInput: {
+                firstName: 'Lisa',
+                lastName: 'Simpson',
+                dob: '1997',
+                telecom: '8675309'
+            }
         });
         queryResults = await dao.findBy({ generalInput: { query: 'Simpson' }, resourceInput: {} });
         count = await dao.total({ generalInput: { query: 'Simpson' }, resourceInput: {} });

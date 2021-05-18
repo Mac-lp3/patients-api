@@ -48,7 +48,34 @@ export async function getPatientCollection(request: Request): Promise<ApiRespons
 }
 
 export async function postPatientCollection(request: Request): Promise<ApiResponse> {
-    return {} as ApiResponse;
+
+    let meta: any = {};
+    let rawPayload: any;
+
+    try {
+
+        const daoInput = validate.postCollectionBody(request.payload);
+
+        const patient = await dao.addPatient(daoInput);
+
+        meta.total = 1;
+        meta.httpCode = '201';
+        rawPayload = patient;
+
+    } catch (err) {
+
+        if (err instanceof ApiError) {
+            rawPayload = err;
+        } else {
+            console.log(err);
+            rawPayload = new ApiError('000', 'Uncaught exception in the validation or DB layer. Double check inputs.', []);
+        }
+        
+    }
+
+    const resp: ApiResponse = await build(meta, rawPayload);
+    
+    return resp;
 }
 
 export async function getPatientInstance(request: Request): Promise<ApiResponse> {
@@ -87,7 +114,35 @@ export async function putPatientInstance(request: Request): Promise <ApiResponse
 }
 
 export async function patchPatientInstance(request: Request): Promise <ApiResponse> {
-    return {} as ApiResponse;
+    
+    let meta: any = {};
+    let rawPayload: any;
+
+    try {
+
+        validate.patientID(request.params.patientID);
+        const daoInput = validate.patchInstanceBody(request.payload);
+
+        const patient = await dao.patchPatient(request.params.patientID, daoInput);
+
+        meta.total = 1;
+        meta.httpCode = '200';
+        rawPayload = patient;
+
+    } catch (err) {
+
+        if (err instanceof ApiError) {
+            rawPayload = err;
+        } else {
+            console.log(err);
+            rawPayload = new ApiError('000', 'Uncaught exception in the validation or DB layer. Double check inputs.', []);
+        }
+        
+    }
+
+    const resp: ApiResponse = await build(meta, rawPayload);
+    
+    return resp;
 }
 
 export async function deletePatientInstance(request: Request): Promise <ApiResponse> {

@@ -18,8 +18,11 @@ export class MemDao {
         console.log('Loading in patient data...')
 
         // read in the dummy data
-        patientForms.forEach(post => {
-            this.addPatient(post);
+        patientForms.forEach(patient => {
+            this.addPatient({
+                generalInput: {},
+                resourceInput: patient
+            });
         });
     }
 
@@ -96,7 +99,9 @@ export class MemDao {
         return resultSet;
     }
 
-    public async addPatient(form: PatientInput): Promise<Patient> {
+    public async addPatient(input: ValidatedInput<PatientInput>): Promise<Patient> {
+
+        const form = input.resourceInput;
         const generatedID = getID(form);
         
         if(await this.exists(generatedID)) {
@@ -146,7 +151,9 @@ export class MemDao {
      * @param form 
      * @returns The updated Patient object, potentially with a new ID
      */
-    public async putPatient(patientID: string, form: PatientInput): Promise<Patient> {
+    public async putPatient(patientID: string, input: ValidatedInput<PatientInput>): Promise<Patient> {
+
+        const form = input.resourceInput;
         if(!await this.exists(patientID)) {
             this.throwIt(
                 MemDao.NOT_FOUND_ERR_CODE,
@@ -160,10 +167,13 @@ export class MemDao {
 
         let newPatient: Patient;
         try {
-            newPatient = await this.addPatient(form);
+            newPatient = await this.addPatient(input);
         } catch(ex) {
             // replace the old patient
-            this.addPatient(currentPatient);
+            this.addPatient({
+                generalInput: {},
+                resourceInput: currentPatient
+            });
             throw ex;
         }
 
@@ -179,7 +189,9 @@ export class MemDao {
      * @param form 
      * @returns the updated Patient object, potentially with a new ID
      */
-    public async patchPatient(patientID: string, form: PatientInput): Promise<Patient> {
+    public async patchPatient(patientID: string, input: ValidatedInput<PatientInput>): Promise<Patient> {
+
+        const form = input.resourceInput;
         if(!await this.exists(patientID)) {
             this.throwIt(
                 MemDao.NOT_FOUND_ERR_CODE,

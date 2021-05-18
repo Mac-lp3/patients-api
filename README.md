@@ -11,8 +11,8 @@
 * ~~add and test response builders~~
 * add and test endpoints
     + ~~GET collection~~
-    + GET instance
-    + POST collection
+    + ~~GET instance~~
+    + ~~POST collection~~
     + PATCH instance
     + DELETE instance
     + PUT instance

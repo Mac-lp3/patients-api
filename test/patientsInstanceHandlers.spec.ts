@@ -1,5 +1,5 @@
 import { ok, strictEqual, notStrictEqual, fail } from 'assert';
-import { getPatientInstance } from '../src/endpoints/patients/handlers';
+import { getPatientInstance, patchPatientInstance } from '../src/endpoints/patients/handlers';
 import { ApiResponse, ErrorResponse, ResourceResponse } from '../src/types/response';
 
 const knownIDs = [
@@ -69,6 +69,10 @@ describe('The patient endpoints handlers', function() {
         ok((resp as ErrorResponse).error.hasOwnProperty('details'));
         ok((resp as ErrorResponse).error.hasOwnProperty('resources'));
 
+    })
+
+    it('should patch existing patients as expected', async function() {
+        
     })
 
 });

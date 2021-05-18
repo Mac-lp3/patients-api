@@ -1,6 +1,6 @@
 import { Request } from 'hapi';
 import { ok, strictEqual, notStrictEqual, fail } from 'assert';
-import { getPatientCollection } from '../src/endpoints/patients/handlers';
+import { getPatientCollection, postPatientCollection } from '../src/endpoints/patients/handlers';
 import { ApiResponse, ErrorResponse, ResourceResponse } from '../src/types/response';
 
 describe('The patient endpoints handlers', function() {
@@ -52,6 +52,34 @@ describe('The patient endpoints handlers', function() {
         strictEqual(resp.metadata.httpCode, '204');
         ok(Array.isArray( (resp as ResourceResponse).payload ));
         strictEqual((resp as ResourceResponse).payload.length, 0);
+    })
+
+    it('should post as expected', async function() {
+
+        // test initial post
+        let reqPayload: any = {
+            firstName: 'Maggie',
+            lastName: 'Simpson',
+            dob: '2000'
+        }
+        let req: any = { payload: reqPayload };
+
+        let resp = await postPatientCollection(req);
+
+        strictEqual(resp.metadata.total, 1);
+        strictEqual(resp.metadata.httpCode, '201');
+        ok((resp as ResourceResponse).payload.hasOwnProperty('id'));
+        ok((resp as ResourceResponse).payload.hasOwnProperty('created'));
+        strictEqual((resp as ResourceResponse).payload.firstName, 'Maggie');
+        strictEqual((resp as ResourceResponse).payload.lastName, 'Simpson');
+
+        // test posting the exact same message
+        resp = await postPatientCollection(req);
+
+        strictEqual(resp.metadata.httpCode, '409');
+        ok((resp as ErrorResponse).error.hasOwnProperty('summary'));
+        ok((resp as ErrorResponse).error.hasOwnProperty('details'));
+        ok((resp as ErrorResponse).error.hasOwnProperty('resources'));
     })
 
 });
