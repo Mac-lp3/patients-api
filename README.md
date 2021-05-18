@@ -13,13 +13,14 @@
     + ~~GET collection~~
     + ~~GET instance~~
     + ~~POST collection~~
-    + PATCH instance
+    + ~~PATCH instance~~
+    + ~~PUT instance~~
     + DELETE instance
-    + PUT instance
++ start & test the server
 * add copy command to build process
-* limit/offset to query function
 * document
 * more data
+* limit/offset to query function
 
 # Optimizations
 

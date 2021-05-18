@@ -221,12 +221,8 @@ function checkNamesAndTypes(paramList: any[], userParams: any) {
         }
 
         // create error object and bubble up
-        const er: ApiError = {
-            code: '200',
-            details: details,
-            resources: []
-        }
-        throw er;
+        throw new ApiError('200', details, []);
+
     }
 
     return inputObject;
