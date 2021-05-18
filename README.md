@@ -9,13 +9,13 @@
 * ~~error handling pattern~~
 * ~~Validatior <-> Dao input interfaces~~
 * ~~add and test response builders~~
-* add and test endpoints
+* ~~add and test endpoints~~
     + ~~GET collection~~
     + ~~GET instance~~
     + ~~POST collection~~
     + ~~PATCH instance~~
     + ~~PUT instance~~
-    + DELETE instance
+    + ~~DELETE instance~~
 + start & test the server
 * add copy command to build process
 * document

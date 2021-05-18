@@ -199,20 +199,31 @@ export class MemDao {
             );
         }
 
+        // get current version of the patient
         const currentPatient = await this.getPatient(patientID);
 
+        // copy new values in the request to the patient
         for(let [key, val] of Object.entries(form)) {
-
-            // validation layer and type definitions ensure this is safe 
             (currentPatient as any)[key] = val
         }
 
-        // regenerate ID in case names/dob changed
+        // regenerate ID in case of name/dob change
         const newID = getID(currentPatient);
-        currentPatient.id = newID;
 
-        // replace old ID with new one, just in case.
-        await this.deletePatient(patientID);
+        if(await this.exists(newID)) {
+            if (newID !== patientID) {
+                // conflict with the new firstName/lastName/dob
+                this.throwIt(
+                    MemDao.NOT_UNIQUE_ERR_CODE,
+                    `A patient with ID ${newID} already exists. This string is generated from firstName, lastName, and DoB. Make any of those values more unique.`
+                );
+            } 
+        } else {
+            // remove old patient
+            await this.deletePatient(patientID);
+        }
+        
+        currentPatient.id = newID;
         MemDao.PATIENTS.set(newID, currentPatient);
 
         return currentPatient;
@@ -223,8 +234,15 @@ export class MemDao {
         return exists;
     }
 
-    public async deletePatient(id: string) {
-        MemDao.PATIENTS.delete(id);
+    public async deletePatient(patientID: string) {
+        if(!await this.exists(patientID)) {
+            this.throwIt(
+                MemDao.NOT_FOUND_ERR_CODE,
+                `Could not DELETE because patient with ID ${patientID} could not be found.`
+            );
+        }
+
+        MemDao.PATIENTS.delete(patientID);
     }
 
     /**

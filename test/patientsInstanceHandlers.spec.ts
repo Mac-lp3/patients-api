@@ -1,6 +1,6 @@
 import { ok, strictEqual, notStrictEqual, fail } from 'assert';
 import { ApiResponse, ErrorResponse, ResourceResponse } from '../src/types/response';
-import { getPatientInstance, patchPatientInstance, putPatientInstance } from '../src/endpoints/patients/handlers';
+import { getPatientInstance, patchPatientInstance, putPatientInstance, deletePatientInstance } from '../src/endpoints/patients/handlers';
 
 const knownIDs = [
     '93af779',
@@ -168,6 +168,27 @@ describe('The patient endpoints handlers', function() {
         ok((guinea as ErrorResponse).error.hasOwnProperty('summary'));
         ok((guinea as ErrorResponse).error.hasOwnProperty('details'));
         ok((guinea as ErrorResponse).error.hasOwnProperty('resources'));
+    })
+
+    it('should delete existing patients', async function() {
+
+        let req: any = { 
+            params: { patientID: '16104ab' },
+            payload: {}
+        };
+
+        let guinea = await getPatientInstance(req);
+        strictEqual(guinea.metadata.httpCode, '200');
+
+        guinea = await deletePatientInstance(req);
+        strictEqual(guinea.metadata.httpCode, '204');
+
+        guinea = await getPatientInstance(req);
+        strictEqual(guinea.metadata.httpCode, '404');
+
+        guinea = await deletePatientInstance(req);
+        strictEqual(guinea.metadata.httpCode, '404');
+
     })
 
 });

@@ -142,18 +142,11 @@ describe('memory based dao', function() {
         // assumes this test runs after the add patient ones
         let testPat = await dao.getPatient(id);
 
-        (newPatientForm as any).isActive = true;
-        let newPat = await dao.putPatient(id, newPatientInput);
-
-        strictEqual(testPat.id, newPat.id);
-        ok(newPat.hasOwnProperty('isActive'));
-        ok(!testPat.hasOwnProperty('isActive'));
-
         // test with id related properties
         newPatientForm.firstName = 'Sideshow';
         newPatientForm.lastName = 'Bob';
 
-        newPat = await dao.putPatient(id, newPatientInput);
+        let newPat = await dao.putPatient(id, newPatientInput);
 
         ok(!await dao.exists(id));
         ok(await dao.exists(newPat.id));
