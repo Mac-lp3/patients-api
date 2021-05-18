@@ -43,6 +43,8 @@ export class MemDao {
         let isFilterMatch: boolean = false;
         const resultSet: Patient[] = [];
 
+        let checkWithVal: any;
+        let valBeingChecked: any;
         MemDao.PATIENTS.forEach((patient) => {
 
             if (isFilter) {
@@ -50,7 +52,18 @@ export class MemDao {
                 // check if patient passes filter
                 for (let [key, val] of Object.entries(resourceInputs)) {
 
-                    if ((patient as any)[key] === val) {
+                    checkWithVal = val;
+                    valBeingChecked = (patient as any)[key];
+
+                    if (typeof valBeingChecked === 'string') {
+                        valBeingChecked = valBeingChecked.toLowerCase();
+                    } 
+                    
+                    if (typeof checkWithVal === 'string') {
+                        checkWithVal = checkWithVal.toLowerCase();
+                    }
+
+                    if (valBeingChecked === checkWithVal) {
                         isFilterMatch = true;
                         break;
                     }
@@ -218,6 +231,8 @@ export class MemDao {
         let isFilterMatch: boolean = false;
         let returnLength: number = 0;
 
+        let checkWithVal: any;
+        let valBeingChecked: any;
         MemDao.PATIENTS.forEach((patient) => {
 
             if (isFilter) {
@@ -225,7 +240,18 @@ export class MemDao {
                 // check if patient passes filter
                 for (let [key, val] of Object.entries(resourceInputs)) {
 
-                    if ((patient as any)[key] === val) {
+                    checkWithVal = val;
+                    valBeingChecked = (patient as any)[key];
+
+                    if (typeof valBeingChecked === 'string') {
+                        valBeingChecked = valBeingChecked.toLowerCase();
+                    } 
+                    
+                    if (typeof checkWithVal === 'string') {
+                        checkWithVal = checkWithVal.toLowerCase();
+                    }
+
+                    if (valBeingChecked === checkWithVal) {
                         isFilterMatch = true;
                         break;
                     }
