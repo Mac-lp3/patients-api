@@ -1,3 +1,18 @@
+/**
+ * This script:
+ *  - initializes the DAO that will be shared by the handlers
+ *  - defines and exports the Patients handler methods
+ * 
+ * The handler functions orchestrate the logic needed to respond to a request.
+ * 
+ * At a high level, the handler methods:
+ *  - accepts a server framework Request object as input
+ *  - extracts and validates any user inputs
+ *  - asynchronusly calls the downstream systems (just the DAO atm)
+ *  - assembles the data (or error) into a formatted response object
+ * 
+ * The outputs of each step are designed to be inputs for the next.
+ */
 import { Request } from 'express';
 import * as validate from './validator';
 import { MemDao } from '../../shared/dao';
@@ -5,13 +20,16 @@ import { ApiError } from '../../types/error';
 import { build } from '../../shared/response';
 import { ApiResponse } from '../../types/response';
 
-// TODO assign this
+// TODO initialize & inject properly
 let dao: MemDao = new MemDao();
 
 /**
- * 200
- * @param request 
- * @returns 
+ * Returns a list of patient objects, based on the request query parameters.
+ * 
+ * The list will be wrapped in a response object containing metadata, such as the full count of patients meeting the search criteria.
+ * 
+ * @param request The raw framework request object (expressjs in this case).
+ * @returns An ErrorResponse or ResourceResponse. ResourceResponse will have an array as its payload.
  */
 export async function getPatientCollection(request: Request): Promise<ApiResponse> {
 
@@ -47,6 +65,15 @@ export async function getPatientCollection(request: Request): Promise<ApiRespons
     return resp;
 }
 
+/**
+ * Creates a new Patient Patient instance in the collection.
+ * 
+ * Since an ID is generated using the firstName, lastName, and dob fields, these are the only required fields. Their
+ * values must also be unique enough to produce a unique ID.
+ * 
+ * @param request The raw framework request object (expressjs in this case).
+ * @returns An ErrorResponse or ResourceResponse. ResourceResponse will have a single object as its payload.
+ */
 export async function postPatientCollection(request: Request): Promise<ApiResponse> {
 
     let meta: any = {};
@@ -77,6 +104,12 @@ export async function postPatientCollection(request: Request): Promise<ApiRespon
     return resp;
 }
 
+/**
+ * Returns a single Patient instance with the given ID (or a not found ErrorResponse).
+ * 
+ * @param request The raw framework request object (expressjs in this case).
+ * @returns An ErrorResponse or ResourceResponse. ResourceResponse will have a single object as its payload.
+ */
 export async function getPatientInstance(request: Request): Promise<ApiResponse> {
 
     let meta: any = {};
@@ -107,6 +140,11 @@ export async function getPatientInstance(request: Request): Promise<ApiResponse>
     return resp;
 }
 
+/**
+ * Used to completely replace an existing Patient. 
+ * @param request 
+ * @returns 
+ */
 export async function putPatientInstance(request: Request): Promise <ApiResponse> {
 
     let meta: any = {};

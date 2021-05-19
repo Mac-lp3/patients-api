@@ -18,7 +18,4 @@ export interface ResourceResponse extends BaseResponse {
     payload: any | any[];
 }
 
-/**
- * 
- */
 export type ApiResponse = ErrorResponse | ResourceResponse;

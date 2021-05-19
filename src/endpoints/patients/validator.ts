@@ -1,11 +1,26 @@
+/**
+ * This script defines and exports the functions that validate user input.
+ * 
+ * Though the same fields are used on multiple endpoints, some fields are required by certain
+ * opertaions, and optional for others.
+ * 
+ * Thus, some operations have a parameter list, which defines the name, expected type, required
+ * or not, and a function that attempts to convert the value into its expected type.
+ * 
+ * If any required fields are missing or cannot be converted to the expected type, an exception
+ * is thrown.
+ */
 import { PatientInput } from '../../types/patient'
 import { ValidatedInput, GeneralQueryInput } from '../../types/validation';
 import { ApiError, RequiredInputError, TypeValidationError } from '../../types/error';
 
+// function to convert the value to string
 function tryToString(value: any) {
+    // TODO general illegal characters
     return String(value);
 }
 
+// function to convert the value to a number
 function tryToNumber(value: any) {
     const conv = Number(value);
     if (isNaN(conv)) {
@@ -14,6 +29,7 @@ function tryToNumber(value: any) {
     return conv;
 }
 
+// function and convert the value to a boolean.
 function tryToBoolean(value: any) {
     if (typeof value !== 'boolean') {
         const lowerVal = value.toLowerCase();
@@ -24,6 +40,7 @@ function tryToBoolean(value: any) {
     return Boolean(value);
 }
 
+// list of query params suppored by all resources 
 const generalParamList = [{
     name: 'limit',
     isRequired: false,
@@ -41,6 +58,7 @@ const generalParamList = [{
     toType: tryToString
 }];
 
+// Patient specific query parameters
 const queryParamList = [{
     name: 'firstName',
     isRequired: false,
@@ -68,6 +86,7 @@ const queryParamList = [{
     toType: tryToBoolean
 }]
 
+// Fields used by Patient PUT/POST operations
 const postAndPutBodyParamList = [{
     name: 'firstName',
     isRequired: true,
@@ -95,6 +114,7 @@ const postAndPutBodyParamList = [{
     toType: tryToBoolean
 }]
 
+// Fields used by Patient PATCH operations
 const patchBodyParamList = [{
     name: 'firstName',
     isRequired: false,
@@ -122,13 +142,17 @@ const patchBodyParamList = [{
     toType: tryToBoolean
 }]
 
+/**
+ * Checks the request against general and patient specific query param lists.
+ * @param params The query parameters on the request.
+ * @returns An object containing the validated/converted general and patient specific params.
+ */
 export function queryParams(params: any): ValidatedInput<PatientInput> {
 
     // Ok for these to be null with GET requests
     let patientInputObject: PatientInput = {};
     let generalInputObject: GeneralQueryInput = {};
 
-    // null check
     if ( params && Object.keys(params).length > 0 ) {
         patientInputObject = checkNamesAndTypes(queryParamList, params);
         generalInputObject = checkNamesAndTypes(generalParamList, params);
@@ -141,6 +165,11 @@ export function queryParams(params: any): ValidatedInput<PatientInput> {
     
 }
 
+/**
+ * Checks the request against the Patient POST/PUT param list.
+ * @param params The body of the request.
+ * @returns 
+ */
 export function postCollectionBody(params: any): ValidatedInput<PatientInput> {
 
     const daoInput: PatientInput = checkNamesAndTypes(postAndPutBodyParamList, params);
@@ -151,6 +180,11 @@ export function postCollectionBody(params: any): ValidatedInput<PatientInput> {
     }
 }
 
+/**
+ * Checks the request against the Patient PATCH param list
+ * @param params 
+ * @returns 
+ */
 export function patchInstanceBody(params: any): ValidatedInput<PatientInput> {
 
     const daoInput: PatientInput = checkNamesAndTypes(patchBodyParamList, params);
@@ -161,6 +195,11 @@ export function patchInstanceBody(params: any): ValidatedInput<PatientInput> {
     }
 }
 
+/**
+ * Checks the request against the Patient POST/PUT param list
+ * @param params 
+ * @returns 
+ */
 export function putInstanceBody(params: any): ValidatedInput<PatientInput> {
 
     const daoInput = checkNamesAndTypes(postAndPutBodyParamList, params);
@@ -171,6 +210,10 @@ export function putInstanceBody(params: any): ValidatedInput<PatientInput> {
     }
 }
 
+/**
+ * Throws an exception if the given ID does not conform to expected format.
+ * @param patientID The Patient id to validate
+ */
 export function patientID(patientID: string) {
 
     let errDetails: string | undefined;
@@ -185,6 +228,12 @@ export function patientID(patientID: string) {
     }
 }
 
+/**
+ * General function to loop over a param list and apply the rules to the input object
+ * @param paramList One of the defined parameter lists
+ * @param userParams The input object being validated
+ * @returns A new object containing only the expected values that passed validation.
+ */
 function checkNamesAndTypes(paramList: any[], userParams: any) {
 
     const inputObject: any = {};

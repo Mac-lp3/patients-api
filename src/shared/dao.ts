@@ -34,7 +34,6 @@ export class MemDao {
      * @returns 
      */
     public async findBy(input: ValidatedInput<PatientInput>): Promise<Patient[]> {
-        // TODO interfaces for the inputs
 
         const generalInputs = input.generalInput;
         const resourceInputs = input.resourceInput;
@@ -48,6 +47,7 @@ export class MemDao {
 
         let checkWithVal: any;
         let valBeingChecked: any;
+
         MemDao.PATIENTS.forEach((patient) => {
 
             if (isFilter) {
