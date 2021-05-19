@@ -1,16 +1,5 @@
 # Patients app
 
-* id pattern: md5/hex first 7
-* downside of updating IDs (is that a problem given the spec tho?)
-* primer on TypeScript vs Java type system
-* search func behavior
-* use of length & async plan
-* use of csv and json (.ts) for some data
-* could break it out more, but wanted to keep it simple/readable
-* didnt implement limit/offset
-* Idempotency & IDs
-* would be good to use something like swagger / protocol buffers
-* hypothetical deployment 
 
 ## ToC
 
@@ -25,6 +14,7 @@
     * [3.6 PUT patient instance (`/api/patients/{id}`)](###3.6-PUT-patient-instance-(`/api/patients/{id}`))
     * [3.7 DELETE patient instance (`/api/patients/{id}`)](###3.7-DELETE-patient-instance-(`/api/patients/{id}`))
 * [4.0 Project structure](##4.0-Project-structure)
+* [5.0 Discussion topics](##5.0-Discussion-topics)
 
 ## 1.0 Installation
 
@@ -368,3 +358,14 @@ project-root/
   |- package.json           # build/tests scripts can be found in here
   `- tsconfig.json          # typescript compiler config
 ```
+
+## 5.0 Discussion topics
+
+* id pattern: md5/hex first 7
+* downside of updating IDs
+* Idempotency & IDs
+* search function behavior
+* use of csv and json (.ts) for some data
+* didnt implement limit/offset
+* swagger / protocol buffers
+* hypothetical deployment
