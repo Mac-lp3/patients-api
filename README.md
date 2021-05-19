@@ -88,12 +88,13 @@ All responses adhere to one of the following formats:
 
 ```json
 // ResourceResponse
+// payload will be only be an array if the request was made against a collection
 {
     "metadata": {
-        "httpCode": string,
-        "total": number          // if request was made against a collection
+        "httpCode": "string",
+        "total": "number"
     },
-    "payload": object | object[] // if request was made against a collection
+    "payload": "object | object[]"
 }
 ```
 
@@ -101,12 +102,12 @@ All responses adhere to one of the following formats:
 // ErrorResponse
 {
     "metadata": {
-        "httpCode": string
+        "httpCode": "string"
     },
-    "paylerroroad": {
-        "summary": string,
-        "details": string,
-        "resources": string[]
+    "error": {
+        "summary": "string",
+        "details": "string",
+        "resources": "string[]"
     }
 }
 ```
@@ -163,18 +164,18 @@ If there are no matches, the array will be empty.
 ```json
 {
     "metadata": {
-        "httpCode": string,
-        "count": number
+        "httpCode": "string",
+        "count": "number"
     },
     "payload": [{
-        "id": string,
-        "firstName": string,
-        "lastName": string,
-        "dob": string,
-        "telecom"?: string,
-        "isActive"?: boolean,
-        "created": string
-    }, ... ]
+        "id": "string",
+        "firstName": "string",
+        "lastName": "string",
+        "dob": "string",
+        "telecom"?: "string",
+        "isActive"?: "boolean",
+        "created": "string"
+    }, {}, {}, {} ]
 }
 ```
 
@@ -190,11 +191,11 @@ The following key/value pairs can be sent in the `POST` request body:
 
 ```json
 {
-    "firstName": string,  // required
-    "lastName": string,   // required
-    "dob": string,        // required
-    "isActive": boolean,  // optional
-    "telecom": string     // optional
+    "firstName": "string // required",
+    "lastName": "string  // required",
+    "dob": "string       // required",
+    "isActive": "boolean // optional",
+    "telecom": "string   // optional"
 }
 ```
 
@@ -204,17 +205,17 @@ If successful, this will return a fully populated patient object with a generate
 
 ```json
     metadata: {
-        "httpCode": string,
-        "count": number
+        "httpCode": "string",
+        "count": "number"
     },
     "payload": {
-        "id": string,
-        "firstName": string,
-        "lastName": string,
-        "dob": string,
-        "telecom"?: string,
-        "isActive"?: boolean,
-        "created": string
+        "id": "string",
+        "firstName": "string",
+        "lastName": "string",
+        "dob": "string",
+        "telecom"?: "string",
+        "isActive"?: "boolean",
+        "created": "string"
     }
 ```
 
@@ -226,17 +227,17 @@ The patient with this ID, or a 404 if not found.
 
 ```json
     metadata: {
-        "httpCode": string,
-        "count": number
+        "httpCode": "string",
+        "count": "number"
     },
     "payload": {
-        "id": string,
-        "firstName": string,
-        "lastName": string,
-        "dob": string,
-        "telecom"?: string,
-        "isActive"?: boolean,
-        "created": string
+        "id": "string",
+        "firstName": "string",
+        "lastName": "string",
+        "dob": "string",
+        "telecom"?: "string",
+        "isActive"?: "boolean",
+        "created": "string"
     }
 ```
 
@@ -256,11 +257,11 @@ One or more of the following key/value pairs can be sent in the request body:
 
 ```json
 {
-    "firstName": string,  // optional
-    "lastName": string,   // optional
-    "dob": string,        // optional
-    "isActive": boolean,  // optional
-    "telecom": string     // optional
+    "firstName": "string // optional",
+    "lastName": "string  // optional",
+    "dob": "string       // optional",
+    "isActive": "boolean // optional",
+    "telecom": "string   // optional"
 }
 ```
 
@@ -270,17 +271,17 @@ The latest version of the patient.
 
 ```json
     metadata: {
-        "httpCode": string,
-        "count": number
+        "httpCode": "string",
+        "count": "number"
     },
     "payload": {
-        "id": string,
-        "firstName": string,
-        "lastName": string,
-        "dob": string,
-        "telecom"?: string,
-        "isActive"?: boolean,
-        "created": string
+        "id": "string",
+        "firstName": "string",
+        "lastName": "string",
+        "dob": "string",
+        "telecom"?: "string",
+        "isActive"?: "boolean",
+        "created": "string"
     }
 ```
 
@@ -296,11 +297,11 @@ The following key/value pairs can be sent in the request body:
 
 ```json
 {
-    "firstName": string,  // required
-    "lastName": string,   // required
-    "dob": string,        // required
-    "isActive": boolean,  // optional
-    "telecom": string     // optional
+    "firstName": "string  // required",
+    "lastName": "string   // required",
+    "dob": "string        // required",
+    "isActive": "boolean  // optional",
+    "telecom": "string    // optional"
 }
 ```
 
@@ -310,17 +311,17 @@ The latest version of the patient.
 
 ```json
     metadata: {
-        "httpCode": string,
-        "count": number
+        "httpCode": "string",
+        "count": "number"
     },
     "payload": {
-        "id": string,
-        "firstName": string,
-        "lastName": string,
-        "dob": string,
-        "telecom"?: string,
-        "isActive"?: boolean,
-        "created": string
+        "id": "string",
+        "firstName": "string",
+        "lastName": "string",
+        "dob": "string",
+        "telecom"?: "string",
+        "isActive"?: "boolean",
+        "created": "string"
     }
 ```
 
@@ -334,7 +335,7 @@ An empty payload.
 
 ```json
     metadata: {
-        "httpCode": string
+        "httpCode": "string"
     },
     "payload": {}
 ```
