@@ -367,6 +367,5 @@ project-root/
 * Idempotency & IDs
 * search function behavior
 * use of csv and json (.ts) for some data
-* didnt implement limit/offset
 * swagger / protocol buffers
 * hypothetical deployment
